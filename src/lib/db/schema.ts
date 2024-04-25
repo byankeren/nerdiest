@@ -9,6 +9,8 @@ export const users = sqliteTable('users', {
 
 	email: text('email').notNull().unique(),
 
+	isEmailVerified: integer('is_email_verified', { mode: 'boolean' }).notNull().default(false),
+
 	password: text('password').notNull(),
 
 	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`)
@@ -23,5 +25,20 @@ export const usersSessions = sqliteTable('users_sessions', {
 
 	expiresAt: integer('expires_at').notNull()
 });
+
+export const emailVerificationCodes = sqliteTable('email_verification_codes', {
+	id: text('id').primaryKey().notNull(),
+	
+	userId: text('user_id')
+	.notNull()
+	.references(() => users.id),
+
+	code: text('code').notNull(),
+
+	email: text('email').notNull(),
+
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+
+})
 
 export type UserInsertSchema = typeof users.$inferInsert;

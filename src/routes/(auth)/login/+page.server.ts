@@ -1,4 +1,4 @@
-import { superValidate, setError, message } from 'sveltekit-superforms';
+import { superValidate, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import { fail } from '@sveltejs/kit';
@@ -18,8 +18,12 @@ const schema = z.object({
         password: z.string()
 })
 
-export const load = async () => {
+export const load = async ({locals}) => {
     const form = await superValidate(zod(schema))
+    const user = locals.user
+    if (user){
+        throw redirect(303, '/')
+    }
     return {form}
 }
 

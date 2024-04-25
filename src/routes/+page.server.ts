@@ -2,16 +2,9 @@ import { deleteSessionCookie } from '$lib/db/authUtils';
 import { lucia } from '$lib/db/lucia';
 import { redirect } from '@sveltejs/kit';
 
-export const load = (async ({ locals: { user }}) => {
-	if (!user) {
-        console.log('blum loggin')
-		throw redirect(303, '/auth/login');
-	}
-
-	return {
-		loggedInUserName: user.username,
-	};
-})
+// export const load = async ({ session }) => {
+	
+// }
 
 export const actions = {
 	logout: async ({ cookies, locals }) => {

@@ -30,12 +30,12 @@ const getCookie = (cookies: Cookies) => {
 export const load = async ({ cookies }) => {
     const userData = getCookie(cookies)
 
-    if(!userData) {
-        return redirect(303, '/register')
-    }
+    // if(!userData) {
+    //     return redirect(303, '/register')
+    // }
 
     return {
-        pendingUserEmail: userData.email,
+        // pendingUserEmail: userData.email,
         emailVerifCodeForm: await superValidate(zod(schema))
     }
 }
@@ -50,11 +50,8 @@ export const actions = {
 
         const emailVerifCodeForm = await superValidate(request, zod(schema))
 
-        if(!emailVerifCodeForm) {
-            return message(emailVerifCodeForm, {
-				alertType: 'error',
-				alertText: 'Invalid verification code, please try again'
-			});
+        if (!emailVerifCodeForm.valid) {
+            return fail(400, { form });
         }
 
         const isCodeValid = await verifyEmailVerificationCode(

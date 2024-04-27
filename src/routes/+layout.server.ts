@@ -1,5 +1,6 @@
-export const load = ({ session }) => {
+export const load = ({ locals }) => {
 	return {
-		isUserLoggedIn: session !== null,
+		user: locals.user,
 	};
 }
+

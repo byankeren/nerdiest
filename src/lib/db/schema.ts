@@ -41,4 +41,17 @@ export const emailVerificationCodes = sqliteTable('email_verification_codes', {
 
 })
 
+
+export const passwordResetTokens = sqliteTable('password_reset_tokens', {
+	id: text('id').primaryKey().notNull().unique(),
+	
+	userId: text('user_id')
+	.notNull()
+	.references(() => users.id),
+
+
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+
+})
+
 export type UserInsertSchema = typeof users.$inferInsert;

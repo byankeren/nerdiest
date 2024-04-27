@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        "primary": ["Playpen Sans", "cursive"],
+        "primary": ["Poppins", "sans-serif"],
       },
       colors: {
         'primary': '#151515'

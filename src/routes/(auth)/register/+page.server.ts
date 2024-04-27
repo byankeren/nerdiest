@@ -14,7 +14,7 @@ import { PENDING_USER_VERIFICATION_COOKIE_NAME, generateEmailVerificationCode, s
 const schema = z.object({
         username: z.string().min(2),
         email: z.string().email().min(2),
-        password: z.string().min(2)
+        password: z.string().min(10)
 })
 
 export const load = async ({locals}) => {

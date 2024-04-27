@@ -4,10 +4,12 @@ import { alphabet, generateRandomString } from 'oslo/crypto';
 import type { Lucia } from 'lucia';
 import {Resend} from 'resend';
 import { db } from './db';
-import { emailVerificationCodes } from './schema';
+import { emailVerificationCodes, passwordResetTokens, users } from './schema';
 import { eq } from 'drizzle-orm';
 import { TimeSpan, createDate, isWithinExpirationDate } from 'oslo';
 import { generateId } from 'lucia';
+import { Argon2id } from "oslo/password";
+
 
 const resend = new Resend(RESEND_API_KEY)
 
@@ -33,23 +35,6 @@ export const deleteSessionCookie = async (lucia: Lucia, cookies: Cookies) => {
 		...sessionCookie.attributes
 	});
 };
-
-// export const generateEmailVerificationCode = async (userId: string, email: string) => {
-
-// 		await db.delete(emailVerificationCodes)
-// 		.where(eq(emailVerificationCodes.userId, userId));
-
-// 		const code = generateRandomString(6, alphabet('0-9'));
-
-// 		await db.insert(emailVerificationCodes).values({
-// 			userId: userId,
-// 			email,
-// 			code,
-// 			expiresAt: createDate(new TimeSpan(5, 'm')) // 5 minutes
-// 		});
-
-// 	return code;
-// };
 
 export const generateEmailVerificationCode = async (userId: string, email: string) => {
     try {
@@ -122,3 +107,89 @@ export const verifyEmailVerificationCode = async (userId: string, code: string) 
 
 	return { success: true, message: 'Email verification successful!' };
 };
+
+export const generatePasswordCode = async (userId: string) => {
+	const tokenId = generateId(40);
+
+	await db.transaction(async (trx) => {
+		await trx.delete(passwordResetTokens).where(eq(passwordResetTokens.userId, userId));
+
+		await trx.insert(passwordResetTokens).values({
+			id: tokenId,
+			userId,
+			expiresAt: createDate(new TimeSpan(60, 'm')) // 15 minutes
+		});
+	});
+
+	return tokenId;
+}
+
+
+export const sendPasswordResetEmail = async (email: string, resetToken: string) => {
+	const htmlContent = `
+	<div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+		<h1>Password Reset Request</h1>
+		<p>We've received a request to reset your password. If you didn't make the request, just ignore this email. Otherwise, you can reset your password using the link below.</p>
+
+		<p>
+		<a href="http://localhost:5173/reset-password?token=${resetToken}" style="color: #337ab7; text-decoration: none;">Reset your password</a>
+		</p>
+
+		<p>If you need help or have any questions, please contact our support team. We're here to help! ${email}</p>
+	</div>
+	`;
+
+	const { data, error } = await resend.emails.send({
+		from: 'onboarding@resend.dev',
+		to: ['yanbyannn@gmail.com'],
+		subject: 'Email Verification Code',
+		html: htmlContent
+	});
+
+	if (error) {
+		console.error({ error });
+		return { success: false, message: 'Failed to send email verification code.' };
+	}
+
+	console.log({ data });
+
+	return { success: true, message: 'Email verification code sent successfully.' };
+};
+
+export const verifyPasswordResetToken = async (tokenId: string) => {
+	const [passwordResetToken] =  await db.select().from(passwordResetTokens).where(eq(passwordResetTokens.id, tokenId))
+	if (!passwordResetToken || passwordResetToken.id !== tokenId) {
+		return {
+			success: false,
+			message: 'The password reset link is invalid. Please request a new one.'
+		};
+	}
+
+	if (!isWithinExpirationDate(passwordResetToken.expiresAt)) {
+		return {
+			success: false,
+			message: 'The password reset link has expired. Please request a new one.'
+		};
+	}
+
+	return {
+		success: true,
+		userId: passwordResetToken.userId,
+		message: 'Password reset token is valid.'
+	};
+}
+
+export const isSameAsOldPassword = async (userId: string, newPassword: string) => {
+
+	const [user] = await db.select({
+		password: users.password
+	}).from(users).where(eq(users.id, userId))
+
+	if(!user){
+		return false
+	}
+
+	const isSamePassword = await new Argon2id().verify(user.password, newPassword);
+
+	return isSamePassword
+}

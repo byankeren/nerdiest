@@ -2,22 +2,23 @@
     import "../app.css";
 	export let data;
     import Navbar from "$lib/components/Navbar.svelte";
+    import { onNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
+
+    onNavigate((navigation) => {
+    	if (!document.startViewTransition) return;
+    
+    	return new Promise((resolve) => {
+    		document.startViewTransition(async () => {
+    			resolve();
+    			await navigation.complete;
+    		});
+    	});
+    });
 </script>
 
 <div class="app max-w-3xl mx-auto font-primary text-primary">
-
-    <header class="flex justify-between py-8 px-4 md:px-0 text-primary">
-        <h2 class="text-2xl font-black">_.Nerd</h2>
-        {#if !data.isUserLoggedIn}
-        <nav class="">
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-        </nav>
-        {:else if data.isUserLoggedIn}
-            <form method="post" action='?/logout'>
-                <button>Logout</button>
-            </form>
-        {/if}
-    </header>
+    <Navbar user="{data.user}"/>
+	<!-- {$page.url.pathname} -->
     <slot />
 </div>

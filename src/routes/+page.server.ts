@@ -2,10 +2,6 @@ import { deleteSessionCookie } from '$lib/db/authUtils';
 import { lucia } from '$lib/db/lucia';
 import { redirect } from '@sveltejs/kit';
 
-// export const load = async ({ session }) => {
-	
-// }
-
 export const actions = {
 	logout: async ({ cookies, locals }) => {
 		if (!locals.session?.id) return;

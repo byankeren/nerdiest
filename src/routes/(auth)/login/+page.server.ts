@@ -1,4 +1,4 @@
-import { superValidate, setError } from 'sveltekit-superforms';
+import { message, superValidate, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import { fail } from '@sveltejs/kit';
@@ -43,21 +43,47 @@ export const actions = {
         const loginForm = await superValidate(request, zod(loginValidation))
 
         if (!loginForm.valid) {
-            return fail(400, { loginForm });
+            return message(loginForm, {
+				alertType: 'error',
+				alertText: 'There was a problem with your submission.'
+			});
         }
 
-        const [isUserExist] = await db.select({id: users.id, password: users.password}).from(users).where(eq(users.email, loginForm.data.email))
+        const [isUserExist] = await db.select().from(users).where(eq(users.email, loginForm.data.email))
 
         if (isUserExist === undefined) {
-            return setError(loginForm, 'email', 'Email not registered');
+            return message(loginForm, {
+				alertType: 'emailAndPass',
+				alertText: 'Your Email Or Password Wrong!'
+			});
         }
-        const validPassword = await new Argon2id().verify(
-            isUserExist.password,
-            loginForm.data.password
-        );
-        if (!validPassword) {
-            return setError(loginForm, 'password', 'Incorrect password');
-        }
+
+
+        if (isUserExist.authMethods.includes('email') && isUserExist.password) {
+			const isPasswordValid = await new Argon2id().verify(
+				isUserExist.password,
+				loginForm.data.password
+			);
+            if (!isPasswordValid) {
+                return message(loginForm, {
+                    alertType: 'emailAndPass',
+                    alertText: 'Your Email Or Password Wrong!'
+                });
+            }
+		} else {
+			// If the user doesn't have a password, it means they registered with OAuth
+			return message(
+				loginForm,
+				{
+					alertType: 'error',
+					alertText:
+						'You registered with an OAuth provider. Please use the appropriate login method.'
+				},
+				{
+					status: 403 // This status code indicates that the server understood the request, but it refuses to authorize it because the user registered with OAuth
+				}
+			);
+		}
 
             
 		await createAndSetSession(lucia, isUserExist.id, cookies);
@@ -69,24 +95,37 @@ export const actions = {
         const resetPasswordForm = await superValidate(request, zod(resetPasswordValidation))
 
         if (!resetPasswordForm.valid) {
-            return fail(400, { resetPasswordForm });
+            return message(resetPasswordForm, {
+				alertType: 'error',
+				alertText: 'There was a problem with your submission.'
+			});
         }
         
-        console.log(resetPasswordForm)
-
         const [isUserExist] = await db.select({id: users.id, email: users.email, isEmailVerified: users.isEmailVerified}).from(users).where(eq(users.email, resetPasswordForm.data.email))
         if (isUserExist === undefined) {
-            return setError(resetPasswordForm, 'email', 'Email not registered');
+            return message(resetPasswordForm, {
+				alertType: 'email',
+				alertText: 'If The Email Is Registred We Will send It To You!'
+			});
         }
 
         if (!isUserExist.isEmailVerified) {
-            return setError(resetPasswordForm, 'email', 'You must verification your email');
+            return message(resetPasswordForm, {
+				alertType: 'email',
+				alertText: 'If The Email Is Registred We Will send It To You!'
+			});
         }
+
         const resetToken = await generatePasswordCode(isUserExist.id)
 
         const sendPasswordReset = await sendPasswordResetEmail(
             isUserExist.email,
             resetToken
         );
+
+        return message(resetPasswordForm, {
+            alertType: 'email',
+            alertText: 'If The Email Is Registred We Will send It To You!'
+        });
     }
 }

@@ -12,7 +12,7 @@ import { generateId } from 'lucia';
 import { Argon2id } from "oslo/password";
 import { PENDING_USER_VERIFICATION_COOKIE_NAME, generateEmailVerificationCode, sendEmailVerificationCode } from '$lib/db/authUtils';
 const schema = z.object({
-        username: z.string().min(2),
+        name: z.string().min(2),
         email: z.string().email().min(2),
         password: z.string().min(10)
 })
@@ -30,36 +30,48 @@ export const actions = {
     register: async ({ request, cookies }) => {
         const form = await superValidate(request, zod(schema))
 
-        console.log(form)
         if (!form.valid) {
-            return fail(400, { form });
+            return message(form, {
+				alertType: 'error',
+				alertText: 'There was a problem with your submission.'
+			});
         }
 
         try{
-            const isEmailExist = await db.select({email: users.email}).from(users).where(eq(users.email, form.data.email))
+            const [isUserExist] = await db.select().from(users).where(eq(users.email, form.data.email))
             
-            if(isEmailExist.length > 0){
-                return setError(form, 'email', 'Email already registered');
+            if(isUserExist && isUserExist.authMethods.includes('email')){
+                return message(form, {
+                    alertType: 'error',
+                    alertText: 'There was a problem with your submission.'
+                });
             }
-            console.log('isemailexist')
 
             const userId = generateId(15);
 			const hashedPassword = await new Argon2id().hash(form.data.password);
 
-            await db.insert(users).values({
-                id: userId,
-				username: form.data.username,
-				email: form.data.email,
-                isEmailVerified: false,
-				password: hashedPassword
-            })
+            if (!isUserExist) {
+				await db.insert(users).values({
+                    id: userId,
+                    name: form.data.name,
+                    email: form.data.email,
+                    isEmailVerified: false,
+                    password: hashedPassword,
+                    authMethods: ['email']
+                })
+			} else {
+				await db
+					.update(db)
+					.set({
+						password: hashedPassword
+					})
+					.where(eq(users.email, form.data.email));
+			}
 
             const emailVerificationCode = await generateEmailVerificationCode(userId, form.data.email)
             const sendEmailVerif = await sendEmailVerificationCode(form.data.email, emailVerificationCode)
 
-            console.log('verif')
             if (!sendEmailVerif.success) {
-                console.log('sendEmailVerif.success')
                 return fail(400, form)
             }
 

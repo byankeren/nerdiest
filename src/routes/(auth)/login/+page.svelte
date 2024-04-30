@@ -1,81 +1,130 @@
 <script lang="ts">
-    import { superForm } from 'sveltekit-superforms';
-    import { Mail , LockKeyhole } from 'lucide-svelte';
-    import Input from '$lib/components/form/Input.svelte';
-    import Modal from '$lib/components/Modal.svelte';
-    
-    export let data;
+	import { superForm } from 'sveltekit-superforms';	
+	import { Input } from '$lib/components/ui/input/index.js';
+	import OAuth from "$lib/components/OAuth.svelte";
+	import {
+    	Button,
+    	buttonVariants
+  	} from "$lib/components/ui/button/index.js";
+  	import * as Dialog from "$lib/components/ui/dialog/index.js";
 
-        let showModal = false
-    const handleToggleModal = () => {
-      showModal = !showModal
-    }
+	import { Toaster, toast } from 'svelte-sonner'	
+	import { LoaderCircle } from 'lucide-svelte';
+	export let data;
 
-    const {form: loginForm, errors: loginErrors, enhance: loginEnhance, delayed: loginDelayed } = superForm(data.loginForm, {resetForm: true})
-    
-    const {
-        form: resetPasswordForm,
-        errors: resetPasswordErrors,
-        enhance: resetPasswordEnhance,
-        delayed: resetPasswordDelayed 
-    } = superForm(data.resetPasswordForm, {resetForm: true})
+	const {
+		form: loginForm,
+		errors: loginErrors,
+		enhance: loginEnhance,
+		delayed: loginDelayed,
+		message: loginMessage
+	} = superForm(data.loginForm, {		
+		onUpdated: () => {
+			if (!$loginMessage) return;
+
+			const { alertType, alertText } = $loginMessage;
+
+			if (alertType === 'error') {
+				toast.error(alertText);
+			}
+			if (alertType === 'emailAndPass') {
+				toast.error(alertText);
+			}
+		}
+	});
+
+	const {
+		form: resetPasswordForm,
+		errors: resetPasswordErrors,
+		enhance: resetPasswordEnhance,
+		delayed: resetPasswordDelayed,
+		message: resetPasswordMessage
+	} = superForm(data.resetPasswordForm, { 
+		onUpdated: () => {
+			if (!$resetPasswordMessage) return;
+
+			const { alertType, alertText } = $resetPasswordMessage;
+
+			if (alertType === 'error') {
+				toast.error(alertText);
+			}
+			if (alertType === 'email') {
+				toast.error(alertText);
+			}
+		}
+		});
 </script>
 
-<button on:click={() => handleToggleModal()}>Open modal</button>
-<Modal
-  title="Edit your details"
-  open={showModal}
-  on:close={() => handleToggleModal()}
->
-<form method="POST" use:resetPasswordEnhance action="?/sendEmailResetPassword" class="px-4 w-full  md:w-[65%] grid">
-    <Input
-        type="text"
-        label="Email"
-        placeholder="example@example.com"    
-        bind:value={$resetPasswordForm.email}
-        errorMessage={$resetPasswordErrors.email}
-        name="email"
-    >
-        <Mail size={22}/>
-    </Input>
-
-    {#if $resetPasswordDelayed}loading...{/if}
-
-    <button class="bg-primary py-2 px-4 text-white mt-3 rounded-sm">Submit</button>
-</form>
-</Modal>
-
-<form method="POST" use:loginEnhance action="?/login" class="px-4 w-full  md:w-[65%] grid">
-    <!-- <h1 class="font-bold md:text-4xl text-3xl">Welcome Back <br>Nerd.</h1>
-    <p class="mb-7 mt-2 text-sm">We've Been Missing You</p> -->
-    <Input
-        type="text"
-        label="Email"
-        placeholder="example@example.com"    
+<Toaster position="top-center" closeButton/>
+<form method="POST" use:loginEnhance action="?/login" class="px-4 w-full md:w-[65%] grid gap-2">
+	<Input 
+		id="email"
+        type="email"
+        placeholder=""
         bind:value={$loginForm.email}
-        errorMessage={$loginErrors.email}
         name="email"
-    >
-        <Mail size={22}/>
-    </Input>
-    <Input
-        type="text"
-        label="password"
-        placeholder="password"    
+		labelText="Email."
+		floatLabel="Type Your Email."
+		miniText="Your Email."
+    />
+	<Input 
+		id="password"
+        type="password"
+        placeholder=""    
         bind:value={$loginForm.password}
-        errorMessage={$loginErrors.password}
         name="password"
-    >
-        <LockKeyhole size={22}/>
-    </Input>
-
-    {#if $loginDelayed}loading...{/if}
-
-    <button class="bg-primary py-2 px-4 text-white mt-3 rounded-sm">Submit</button>
-
-    <div class="mt-1 text-end">Don't Have Account?
-            <a href="/register" class="underline font-bold">
-                Register
-            </a>
-    </div>
+		labelText="Password."
+		floatLabel="Type Your Password."
+		miniText="Your Password."
+    />
+	<div class="flex items-center mb-1">
+		<div class="flex-grow mr-3 border-t border-gray-500"></div>
+		<div>Or</div>
+		<div class="flex-grow ml-3 border-t border-gray-500"></div>
+	</div>	
+	<div class="grid grid-cols-[1fr_3fr] gap-2">  	
+		<Dialog.Root>
+			<Dialog.Trigger>
+				<Button type="button">
+					Reset Password
+				</Button>
+			</Dialog.Trigger>
+			<Dialog.Content class="sm:max-w-[425px]">
+			  <Dialog.Header>
+			  </Dialog.Header>
+			  <form method="POST" use:resetPasswordEnhance action="?/sendEmailResetPassword" class="px-4 w-full grid gap-4">
+				<Input id="email"
+		        type="email"
+		        placeholder=""
+		        bind:value={$resetPasswordForm.email}
+		        name="email"
+				labelText="Email."
+				floatLabel="Type Your Email."
+				miniText="Your Email."
+		    />
+					<Dialog.Footer>
+						<Button type="submit" disabled={$resetPasswordDelayed}>
+							{#if $resetPasswordDelayed}
+								<LoaderCircle class="animate-spin"/>
+							{/if}
+							Login
+						</Button>
+					</Dialog.Footer>
+				</form>
+			</Dialog.Content>
+		</Dialog.Root>
+		<Button type="submit" disabled={$loginDelayed}>
+			{#if $loginDelayed}
+			<LoaderCircle class="animate-spin"/>
+			{/if}
+			Login
+		</Button>
+	</div>
+	<OAuth />
+	
+	<p class="mt-2 font-semibold w-full text-end">
+		Dont Have Account ?
+		<a href="/register" class="underline font-bold"> register</a>
+	</p>
 </form>
+

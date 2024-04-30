@@ -1,60 +1,74 @@
 <script lang="ts">
     import { superForm } from 'sveltekit-superforms';
-    import { Mail , LockKeyhole, UserRound } from 'lucide-svelte';
-    import Input from '$lib/components/form/Input.svelte';
+    import { Input } from '$lib/components/ui/input/index.js';
+	import { Button } from "$lib/components/ui/button/index.js";
+	import OAuth from "$lib/components/OAuth.svelte";
+	import { Toaster, toast } from 'svelte-sonner'	
+	import { LoaderCircle } from 'lucide-svelte';
     
     export let data;
 
-    const {form, errors, enhance } = superForm(data.form, {resetForm: true})
+    const {form, errors, enhance, delayed, message } = superForm(data.form, {
+        onUpdated: () => {
+			if (!$message) return;
+
+			const { alertType, alertText } = $message;
+
+			if (alertType === 'error') {
+				toast.error(alertText);
+			}
+			if (alertType === 'email') {
+				toast.error(alertText);
+			}
+		}
+    })
 
 </script>
-<form method="POST" use:enhance action="?/register" class="px-4 w-full md:w-[65%] grid">
-    <h1 class="font-bold md:text-xl text-3xl">Start Your <br>Nerd Journey.</h1>
-    <p class="mb-7 mt-2 text-sm">We've Been Missing You</p>
-    <Input
-        type="text"
-        label="username"
-        placeholder="username"    
-        bind:value={$form.username}
-        errorMessage={$errors.username}
-        name="username"
-    >
-        <UserRound size={22}/>    
-    </Input>
-    <Input
-        type="text"
-        label="Email"
-        placeholder="example@example.com"    
+
+
+<Toaster position="top-center" closeButton/>
+<form method="POST" use:enhance action="?/register" class="px-4 w-full md:w-[65%] grid gap-2">
+    <Input id="name"
+        type="name"
+        placeholder=""
+        bind:value={$form.name}
+        name="name"
+		labelText="name."
+		floatLabel="Type Your name."
+		miniText="Your Email."
+    />
+    <Input id="email"
+        type="email"
+        placeholder=""
         bind:value={$form.email}
-        errorMessage={$errors.email}
         name="email"
-    >
-        <Mail size={22}/>
-    </Input>
-    <Input
-        type="text"
-        label="password"
-        placeholder="password"    
+		labelText="Email."
+		floatLabel="Type Your Email."
+		miniText="Your Email."
+    />
+	<Input id="password"
+        type="password"
+        placeholder=""    
         bind:value={$form.password}
-        errorMessage={$errors.password}
         name="password"
-    >
-        <LockKeyhole size={22}/>
-    </Input>
-    
-    <button class="bg-primary py-2 px-4 text-white rounded-sm mt-3">Submit</button>
-    <div class=" inset-0 flex items-center justify-center my-5">
-        <div class="border-b border-gray-400 w-full"></div>
-        <div class="px-2 bg-white text-gray-700">Awikwok</div>
-        <div class="border-b border-gray-400 w-full"></div>
-      </div>
-      <div>
-          google
-          Github
-        </div>
-    <div class="mt-1 text-end">Have Account?
-        <a href="/login" class="underline font-bold">
-            Login
-        </a>
-    </div>
+		labelText="Password."
+		floatLabel="Type Your Password."
+		miniText="Your Password."
+    />
+	<div class="flex items-center mb-2">
+		<div class="flex-grow mr-3 border-t border-gray-500"></div>
+		<div>Or</div>
+		<div class="flex-grow ml-3 border-t border-gray-500"></div>
+	</div>	
+	<Button type="submit" disabled={$delayed}>
+		{#if $delayed}
+		<LoaderCircle class="animate-spin"/>
+		{/if}
+		Register
+	</Button>
+	<OAuth/>
+	<p class="mt-2 font-semibold w-full text-end">
+		Have Account ?
+		<a href="/login" class="underline font-bold"> Login</a>
+	</p>
 </form>

@@ -1,17 +1,21 @@
 import { sql } from 'drizzle-orm';
 
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey().notNull(),
 
-	username: text('username').notNull(),
+	name: text('name'),
 
-	email: text('email').notNull().unique(),
+	avatarUrl: text('avatar_url'),
 
-	isEmailVerified: integer('is_email_verified', { mode: 'boolean' }).notNull().default(false),
+	email: text('email').unique().notNull(),
 
-	password: text('password').notNull(),
+	isEmailVerified: integer('is_email_verified', { mode: 'boolean' }).default(false),
+
+	password: text('password'),
+
+	authMethods: text('auth_methods', { mode: 'json' }).$type<string[]>().notNull(),
 
 	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`)
 });
@@ -25,6 +29,22 @@ export const usersSessions = sqliteTable('users_sessions', {
 
 	expiresAt: integer('expires_at').notNull()
 });
+
+export const oauthAccountsTable = sqliteTable('oauth_accounts',{
+		userId: text('user_id')
+			.notNull()
+			.references(() => users.id, {
+				onDelete: 'cascade'
+			}),
+
+		providerId: text('provider_id').notNull(),
+
+		providerUserId: text('provider_user_id').notNull()
+	},
+	(t) => ({
+		pk: primaryKey({ columns: [t.providerId, t.providerUserId] })
+	})
+);
 
 export const emailVerificationCodes = sqliteTable('email_verification_codes', {
 	id: text('id').primaryKey().notNull(),

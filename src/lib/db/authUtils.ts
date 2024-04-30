@@ -70,7 +70,7 @@ export const generateEmailVerificationCode = async (userId: string, email: strin
 export const sendEmailVerificationCode = async (email: string, code: string) => {
 	const { data, error } = await resend.emails.send({
 		from: 'onboarding@resend.dev',
-		to: ['yanbyannn@gmail.com'],
+		to: [email],
 		subject: 'Email Verification Code',
 		html: `<p>Your email verification code is: <strong>${code}${email}</strong></p>`
 	});

@@ -61,7 +61,7 @@ export const actions = {
                 })
 			} else {
 				await db
-					.update(db)
+					.update(users)
 					.set({
 						password: hashedPassword
 					})

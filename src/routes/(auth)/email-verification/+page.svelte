@@ -1,6 +1,6 @@
 <script lang="ts">
     import { superForm } from 'sveltekit-superforms';
-    import Input from '$lib/components/form/Input.svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
     
     export let data;
 

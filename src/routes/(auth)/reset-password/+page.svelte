@@ -1,9 +1,9 @@
 <script lang="ts">
 	export let data;
 
-    import Input from '$lib/components/form/Input.svelte'
     import { superForm } from 'sveltekit-superforms';
-    // import {LockKeyhole} from 'lucide-svelte'
+	import { Input } from '$lib/components/ui/input/index.js';
+
 
     const {form, errors, enhance, delayed } = superForm(data.form, {resetForm: true})
     import SuperDebug from 'sveltekit-superforms';

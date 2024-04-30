@@ -13,7 +13,7 @@ import {
 
 import { GitHub, Google } from 'arctic';
 
-const googleRedirectUrl = 'http://localhost:5173/oauth/google/callback'
+const googleRedirectUrl = 'https://nerdiest.vercel.app/oauth/google/callback'
 
 export const githubOauth = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET);
 export const googleOauth = new Google(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, googleRedirectUrl);

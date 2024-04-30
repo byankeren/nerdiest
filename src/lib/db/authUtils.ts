@@ -138,7 +138,7 @@ export const sendPasswordResetEmail = async (email: string, resetToken: string) 
 		<p>We've received a request to reset your password. If you didn't make the request, just ignore this email. Otherwise, you can reset your password using the link below.</p>
 
 		<p>
-		<a href="http://localhost:5173/reset-password?token=${resetToken}" style="color: #337ab7; text-decoration: none;">Reset your password</a>
+		<a href="https://nerdiest.vercel.app/reset-password?token=${resetToken}" style="color: #337ab7; text-decoration: none;">Reset your password</a>
 		</p>
 
 		<p>If you need help or have any questions, please contact our support team. We're here to help! ${email}</p>
@@ -147,7 +147,7 @@ export const sendPasswordResetEmail = async (email: string, resetToken: string) 
 
 	const { data, error } = await resend.emails.send({
 		from: 'onboarding@resend.dev',
-		to: ['yanbyannn@gmail.com'],
+		to: [email],
 		subject: 'Email Verification Code',
 		html: htmlContent
 	});

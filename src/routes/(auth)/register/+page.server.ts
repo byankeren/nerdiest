@@ -75,9 +75,7 @@ export const actions = {
                 return fail(400, form)
             }
 
-            const userEmail = form.data.email
-
-            const pendingVerificationUserData = JSON.stringify({ id: userId, email: userEmail })
+            const pendingVerificationUserData = JSON.stringify({ id: userId, email: form.data.email })
 
 			cookies.set(PENDING_USER_VERIFICATION_COOKIE_NAME, pendingVerificationUserData, { path: '/email-verification' } );
         }

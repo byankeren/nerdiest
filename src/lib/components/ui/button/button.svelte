@@ -10,7 +10,7 @@
 	export let variant: $$Props["variant"] = "default";
 	export let size: $$Props["size"] = "default";
 	export let builders: $$Props["builders"] = [];
-	export let type: $$Props["type"];
+	export let type: $$Props["type"] = undefined;
 	export { className as class };
 </script>
 

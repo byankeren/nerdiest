@@ -69,10 +69,10 @@ export const generateEmailVerificationCode = async (userId: string, email: strin
 
 export const sendEmailVerificationCode = async (email: string, code: string) => {
 	const { data, error } = await resend.emails.send({
-		from: 'onboarding@resend.dev',
+		from: 'potatocode0206@gmail.com',
 		to: [email],
 		subject: 'Email Verification Code',
-		html: `<p>Your email verification code is: <strong>${code}${email}</strong></p>`
+		html: `<p>Your email verification code is: <strong>${code}</strong></p>`
 	});
 
 	if (error) {
@@ -146,7 +146,7 @@ export const sendPasswordResetEmail = async (email: string, resetToken: string) 
 	`;
 
 	const { data, error } = await resend.emails.send({
-		from: 'onboarding@resend.dev',
+		from: 'potatocode0206@gmail.com',
 		to: [email],
 		subject: 'Email Verification Code',
 		html: htmlContent

@@ -48,7 +48,7 @@ export const actions = {
 
             const userId = generateId(15);
 			const hashedPassword = await new Argon2id().hash(form.data.password);
-            const avatars = ['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5'];
+            const avatars = ['avatar-1', 'avatar-2', 'avatar-3', 'avatar-4', 'avatar-5'];
             avatars.sort(() => Math.random() - 0.5);
 
             if (!isUserExist) {

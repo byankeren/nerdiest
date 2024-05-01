@@ -1,7 +1,6 @@
 import { message, superValidate, setError } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
-import { fail } from '@sveltejs/kit';
 
 import { redirect } from '@sveltejs/kit';
 
@@ -13,29 +12,20 @@ import { createAndSetSession } from '$lib/db/authUtils';
 import { Argon2id } from "oslo/password";
 import { lucia } from '$lib/db/lucia';
 
-import { generatePasswordCode, sendPasswordResetEmail } from '$lib/db/authUtils';
-
-
 const loginValidation = z.object({
         email: z.string().email().min(2),
         password: z.string()
 })
 
-const resetPasswordValidation = z.object({
-        email: z.string().email().min(2),
-})
-
 export const load = async ({locals}) => {
     const loginForm = await superValidate(zod(loginValidation))
-    const resetPasswordForm = await superValidate(zod(resetPasswordValidation))
-
     const user = locals.user
 
     if (user){
         throw redirect(303, '/')
     }
 
-    return {loginForm, resetPasswordForm}
+    return {loginForm}
 }
 
 export const actions = {
@@ -90,42 +80,4 @@ export const actions = {
 
 		throw redirect(303, '/');
     },
-
-    sendEmailResetPassword: async({request, cookies}) => {
-        const resetPasswordForm = await superValidate(request, zod(resetPasswordValidation))
-
-        if (!resetPasswordForm.valid) {
-            return message(resetPasswordForm, {
-				alertType: 'error',
-				alertText: 'There was a problem with your submission.'
-			});
-        }
-        
-        const [isUserExist] = await db.select({id: users.id, email: users.email, isEmailVerified: users.isEmailVerified}).from(users).where(eq(users.email, resetPasswordForm.data.email))
-        if (isUserExist === undefined) {
-            return message(resetPasswordForm, {
-				alertType: 'email',
-				alertText: 'If The Email Is Registred We Will send It To You!'
-			});
-        }
-
-        if (!isUserExist.isEmailVerified) {
-            return message(resetPasswordForm, {
-				alertType: 'email',
-				alertText: 'If The Email Is Registred We Will send It To You!'
-			});
-        }
-
-        const resetToken = await generatePasswordCode(isUserExist.id)
-
-        const sendPasswordReset = await sendPasswordResetEmail(
-            isUserExist.email,
-            resetToken
-        );
-
-        return message(resetPasswordForm, {
-            alertType: 'email',
-            alertText: 'If The Email Is Registred We Will send It To You!'
-        });
-    }
 }

@@ -56,7 +56,47 @@ const config = {
 			},
 			fontFamily: {
 				"primary":  ["Poppins", "sans-serif"]
-			}
+			},
+			keyframes: {
+				float1: {
+				  '0%': {
+					transform: 'translateY(-5px)'
+				  },
+				  '50%': {
+					transform: 'translateY(-0px)'
+				  },
+				  '100%': {
+					transform: 'translateY(-5px)'
+				  }
+				},
+				float2: {
+				  '0%': {
+					transform: 'translateY(0px)'
+				  },
+				  '50%': {
+					transform: 'translateY(-5px)'
+				  },
+				  '100%': {
+					transform: 'translateY(0px)'
+				  }
+				},
+				float3: {
+				  '0%': {
+					transform: 'translateY(0px)'
+				  },
+				  '50%': {
+					transform: 'translateY(-10px)'
+				  },
+				  '100%': {
+					transform: 'translateY(0px)'
+				  }
+				},
+			  },
+			  animation: {
+				'floating-1': 'float1 3s linear infinite',
+				'floating-2': 'float2 3s linear infinite',
+				'floating-3': 'float3 4s linear infinite',
+			  }
 		}
 	},
 };

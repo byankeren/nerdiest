@@ -4,7 +4,7 @@
 </script>
 
 
-<header class="flex justify-between items-center pt-8 px-4 md:px-0 text-primary">
+<header class="flex justify-between items-center py-8 px-4 md:px-0 text-primary bg-transparent">
     <a href="/" class="text-2xl font-black">_.Nerd</a>
     <nav class="">
         {#if user == null}

@@ -5,7 +5,7 @@ import { redirect } from '@sveltejs/kit';
 
 import { eq,and } from 'drizzle-orm';
 import { db } from '$lib/db/db';
-import { posts, users, likes } from '$lib/db/schema';
+import { posts, users } from '$lib/db/schema';
 
 import { generateId } from 'lucia';
 import { Argon2id } from "oslo/password";
@@ -54,25 +54,4 @@ export const actions = {
             })
         
     },
-    like: async ({ request, cookies, locals, url }) => {
-            console.log(url.searchParams.get('id'))
-
-            const likeId = generateId(15);
-
-            const [isLiked] = await db.select().from(likes).where(and(
-                eq(likes.postId, url.searchParams.get('id')),
-                eq(likes.userId, locals.user.id)
-            ))
-
-            console.log(isLiked)
-
-            if(!isLiked) {
-                await db.insert(likes).values({
-                id: likeId,
-                userId: locals.user.id,
-                postId: url.searchParams.get('id'),
-                likes:true
-                })       
-            }
-    }
 }

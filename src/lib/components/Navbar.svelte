@@ -30,7 +30,7 @@
                         Hello,
                         {user.name}
                         <Avatar.Root>
-                            <Avatar.Image src={`/src/lib/assets/${user.avatarUrl}.png`} alt="Profile" />
+                            <Avatar.Image src={`/${user.avatarUrl}.png`} alt="Profile" />
                             <Avatar.Fallback>CN</Avatar.Fallback>
                         </Avatar.Root>
                     </button>

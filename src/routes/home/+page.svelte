@@ -5,11 +5,6 @@
 	import { Toaster, toast } from 'svelte-sonner'	
 	import { LoaderCircle } from 'lucide-svelte';
     import * as Avatar from "$lib/components/ui/avatar";
-    import avatar1 from "$lib/assets/avatar-1.png";
-    import avatar2 from "$lib/assets/avatar-2.png";
-    import avatar3 from "$lib/assets/avatar-3.png";
-    import avatar4 from "$lib/assets/avatar-4.png";
-    import avatar5 from "$lib/assets/avatar-5.png";
 
     export let data;
 
@@ -43,7 +38,7 @@
         <div class="mt-5 border-b-2 py-4 mx-4 border-primary grid gap-4">
             <div class="flex gap-2 items-center">
                 <Avatar.Root>
-                    <Avatar.Image src={`/src/lib/assets/${post.author.avatarUrl}.png`} alt="Profile" />
+                    <Avatar.Image src={`/${post.author.avatarUrl}.png`} alt="Profile" />
                     <Avatar.Fallback>CN</Avatar.Fallback>
                 </Avatar.Root>
                 {post.author.name}

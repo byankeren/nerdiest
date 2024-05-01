@@ -22,7 +22,7 @@ export const load = async ({locals}) => {
     const user = locals.user
 
     if (user){
-        throw redirect(303, '/')
+        throw redirect(303, '/home')
     }
 
     return {loginForm}
@@ -78,6 +78,6 @@ export const actions = {
             
 		await createAndSetSession(lucia, isUserExist.id, cookies);
 
-		throw redirect(303, '/');
+		throw redirect(303, '/home');
     },
 }

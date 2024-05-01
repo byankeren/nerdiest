@@ -25,8 +25,8 @@
 
 </script>
 
-
 <Toaster position="top-center" closeButton/>
+
 <form method="POST" use:enhance action="?/register" class="px-4 w-full md:w-[65%] grid gap-2">
     <Input id="name"
         type="name"

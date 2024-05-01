@@ -48,6 +48,8 @@ export const actions = {
 
             const userId = generateId(15);
 			const hashedPassword = await new Argon2id().hash(form.data.password);
+            const avatars = ['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5'];
+            avatars.sort(() => Math.random() - 0.5);
 
             if (!isUserExist) {
 				await db.insert(users).values({
@@ -55,6 +57,7 @@ export const actions = {
                     name: form.data.name,
                     email: form.data.email,
                     password: hashedPassword,
+                    avatarUrl: avatars[0],
                     authMethods: ['email']
                 })
 			} else {

@@ -55,17 +55,17 @@
 		floatLabel="Type Your Password."
 		miniText="Your Password."
     />
-	<div class="flex items-center mb-1">
-		<div class="flex-grow mr-3 border-t border-gray-500"></div>
-		<div>Or</div>
-		<div class="flex-grow ml-3 border-t border-gray-500"></div>
-	</div>	
 	<Button type="submit" disabled={$loginDelayed}>
 		{#if $loginDelayed}
 		<LoaderCircle class="animate-spin"/>
 		{/if}
 		Login
 	</Button>
+	<div class="flex items-center">
+		<div class="flex-grow mr-3 border-t border-gray-500"></div>
+		<div>Or</div>
+		<div class="flex-grow ml-3 border-t border-gray-500"></div>
+	</div>	
 	<OAuth />
 	
 	<p class="mt-2 font-semibold w-full text-end">

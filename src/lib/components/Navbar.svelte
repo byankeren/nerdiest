@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let user;
+    import { enhance } from '$app/forms';
 </script>
 
 
@@ -8,11 +9,14 @@
     <nav class="">
         {#if user == null}
             <a href="/login" class="border-[3px] border-primary py-2 text-xs px-4 font-bold rounded-xl shadow-[0px_4px] hover:shadow-[0px_2px]">Login</a>
-            <!-- <a href="/register" class="bg-primary py-2 text-sm px-4 rounded text-white">Register</a> -->
         {:else if user != null}
-            <form method="post" action='?/logout'>
+            <form method="post" action='?/logout' use:enhance>
                 <button class="bg-primary py-2 text-sm px-4 rounded text-white">Logout</button>
             </form>
+            <p>
+                Hello,
+                {user.name}
+            </p>
         {/if}
     </nav>
 </header>

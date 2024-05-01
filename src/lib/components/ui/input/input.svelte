@@ -3,7 +3,6 @@
 	import type { InputEvents } from './index.js';
 	import { Label } from '../label/index.js';
 	import { cn } from '$lib/utils.js';
-	import { CircleAlert } from 'lucide-svelte';
 
 	type $$Props = HTMLInputAttributes;
 	type $$Events = InputEvents;
@@ -20,9 +19,9 @@
 	// Fixed in Svelte 5, but not backported to 4.x.
 	export let readonly: $$Props['readonly'] = undefined;
 </script>
-<div class="grid gap-2">
+<div class="">
 <Label for={id}>{labelText}</Label>
-<div class="relative">		
+<div class="relative mt-2">		
 	<input
 		class={cn(
 			'peer h-full w-full rounded-md border-zinc-500 bg-transparent px-3 py-2 text-sm font-normal text-blue-gray-700 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100',
@@ -46,6 +45,7 @@
 		on:paste
 		on:input
 		on:wheel
+		autocomplete="off"
 		{...$$restProps}
 	/>
 	

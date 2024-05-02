@@ -5,7 +5,7 @@
 	import { Toaster, toast } from 'svelte-sonner'	
 	import { LoaderCircle } from 'lucide-svelte';
     import * as Avatar from "$lib/components/ui/avatar";
-
+    import * as AlertDialog from "$lib/components/ui/alert-dialog";
     export let data;
 
     const {form, errors, enhance, delayed, message } = superForm(data.form)
@@ -43,8 +43,33 @@
                 </Avatar.Root>
                 {post.author.name}
             </div>
-            <div class="w-fit">
+            <div class=" flex justify-between items-center">
                 {post.content}
+                <!-- {} -->
+                {#if data.user.id == post.author.id}
+                <AlertDialog.Root>
+                    <AlertDialog.Trigger>
+                        <button type="button" class="bg-primary rounded-md text-white border-2 px-2 py-1">Delete</button>
+                    </AlertDialog.Trigger>
+                    <AlertDialog.Content>
+                      <AlertDialog.Header>
+                        <AlertDialog.Title>Are Wanna Delet This Folks?</AlertDialog.Title>
+                        <AlertDialog.Description>
+                          This action cannot be undone. This will permanently delete your account
+                          and remove your data from our servers.
+                        </AlertDialog.Description>
+                      </AlertDialog.Header>
+                      <AlertDialog.Footer>
+                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                        <AlertDialog.Action>
+                            <form method="POST" action='?/deletePost&id={post.id}' use:enhance>
+                                <button type="submit" class="">Delete</button>
+                            </form>
+                        </AlertDialog.Action>
+                      </AlertDialog.Footer>
+                    </AlertDialog.Content>
+                  </AlertDialog.Root>
+                {/if}
             </div>
         </div>
         {/each}

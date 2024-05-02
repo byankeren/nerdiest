@@ -5,10 +5,9 @@ import { redirect } from '@sveltejs/kit';
 
 import { eq,and } from 'drizzle-orm';
 import { db } from '$lib/db/db';
-import { posts, users } from '$lib/db/schema';
+import { posts } from '$lib/db/schema';
 
 import { generateId } from 'lucia';
-import { Argon2id } from "oslo/password";
 
 const schema = z.object({
         content: z.string().min(2),
@@ -28,7 +27,7 @@ export const load = async ({locals}) => {
     if (!user){
         throw redirect(303, '/login')
     }
-    return {form, displayPosts}
+    return {form, displayPosts, user}
 }
 
 export const actions = {
@@ -42,8 +41,6 @@ export const actions = {
                 		alertText: 'There was a problem with your submission.'
                 });
             }
-            console.log(locals.user.id)
-            console.log(form)
 
             const postId = generateId(15);
 
@@ -54,4 +51,9 @@ export const actions = {
             })
         
     },
+    deletePost: async ({url}) => {
+	    const id = url.searchParams.get('id');
+        console.log(id)
+        await db.delete(posts).where(eq(posts.id, id))
+    }
 }

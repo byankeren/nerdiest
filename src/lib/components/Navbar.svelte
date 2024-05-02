@@ -47,7 +47,7 @@
                     </DropdownMenu.Label>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item>
-                        <form method="post" action='/logout?/logout' use:enhance>
+                        <form method="POST" action='/logout?/logout' use:enhance>
                             <button class="">Logout</button>
                         </form>
                     </DropdownMenu.Item>

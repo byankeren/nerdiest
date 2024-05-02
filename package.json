@@ -40,7 +40,7 @@
 		"@libsql/client": "^0.6.0",
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
 		"arctic": "^1.8.0",
-		"bits-ui": "^0.21.6",
+		"bits-ui": "^0.21.7",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.30.9",
 		"lucide-svelte": "^0.372.0",

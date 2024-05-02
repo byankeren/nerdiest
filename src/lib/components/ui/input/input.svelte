@@ -20,11 +20,13 @@
 	export let readonly: $$Props['readonly'] = undefined;
 </script>
 <div class="">
-<Label for={id}>{labelText}</Label>
+<Label for={id}>
+	{labelText}
+</Label>
 <div class="relative mt-2">		
 	<input
 		class={cn(
-			'peer h-full w-full rounded-md border-zinc-500 bg-transparent px-3 py-2 text-sm font-normal text-blue-gray-700 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100',
+			'peer h-full w-full rounded-md border-zinc-500 px-3 py-2 text-sm font-normal text-blue-gray-700 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 placeholder:opacity-0 focus:placeholder:opacity-100',
 			className
 		)}
 		id={id} 
@@ -63,9 +65,9 @@
 	  peer-disabled:peer-placeholder-shown:text-blue-gray-500">
       {floatLabel}
     </label>
+	<p class="text-sm flex gap-1 items-center invisible peer-invalid:visible text-pink-600">
+		<!-- <CircleAlert size={16}/> -->
+		{miniText}
+	</p>
 </div>
-<p class="text-sm text-muted-foreground flex gap-1 items-center">
-	<!-- <CircleAlert size={16}/> -->
-	{miniText}
-</p>
 </div>

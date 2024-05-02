@@ -28,7 +28,7 @@ export const load = async ({locals}) => {
 export const actions = {
     register: async ({ request, cookies }) => {
         const form = await superValidate(request, zod(schema))
-
+        console.log(form.errors)
         if (!form.valid) {
             return message(form, {
 				alertType: 'error',

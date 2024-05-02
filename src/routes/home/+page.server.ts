@@ -53,7 +53,6 @@ export const actions = {
     },
     deletePost: async ({url}) => {
 	    const id = url.searchParams.get('id');
-        console.log(id)
         await db.delete(posts).where(eq(posts.id, id))
     }
 }

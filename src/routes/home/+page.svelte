@@ -53,7 +53,7 @@
                     </AlertDialog.Trigger>
                     <AlertDialog.Content>
                       <AlertDialog.Header>
-                        <AlertDialog.Title>Are Wanna Delet This Folks?</AlertDialog.Title>
+                        <AlertDialog.Title>Are Wanna Delete This Folks?</AlertDialog.Title>
                         <AlertDialog.Description>
                           This action cannot be undone. This will permanently delete your account
                           and remove your data from our servers.
@@ -61,11 +61,9 @@
                       </AlertDialog.Header>
                       <AlertDialog.Footer>
                         <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <AlertDialog.Action>
-                            <form method="POST" action='?/deletePost&id={post.id}' use:enhance>
-                                <button type="submit" class="">Delete</button>
-                            </form>
-                        </AlertDialog.Action>
+                        <form method="POST" action='?/deletePost&id={post.id}' use:enhance>
+                            <Button type="submit" class="">Delete</Button>
+                        </form>
                       </AlertDialog.Footer>
                     </AlertDialog.Content>
                   </AlertDialog.Root>

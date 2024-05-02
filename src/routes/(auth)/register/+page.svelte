@@ -54,6 +54,7 @@
 		labelText="Password."
 		floatLabel="Type Your Password."
 		miniText="Your Password."
+		minlength="10"
     />
 	<Button type="submit" disabled={$delayed}>
 		{#if $delayed}

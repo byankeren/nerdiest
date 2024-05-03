@@ -53,7 +53,7 @@
         name="password"
 		labelText="Password."
 		floatLabel="Type Your Password."
-		miniText="Your Password."
+		miniText="Must be at least 10 characters long"
 		minlength="10"
     />
 	<Button type="submit" disabled={$delayed}>

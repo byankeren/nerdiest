@@ -65,7 +65,7 @@
 	  peer-disabled:peer-placeholder-shown:text-blue-gray-500">
       {floatLabel}
     </label>
-	<p class="text-sm flex gap-1 items-center invisible peer-invalid:visible text-pink-600">
+	<p class="text-sm flex gap-1 items-center text-muted-foreground">
 		<!-- <CircleAlert size={16}/> -->
 		{miniText}
 	</p>

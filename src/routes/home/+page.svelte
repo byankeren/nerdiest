@@ -61,8 +61,8 @@
                       </AlertDialog.Header>
                       <AlertDialog.Footer>
                         <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <form method="POST" action='?/deletePost&id={post.id}' use:enhance>
-                            <Button type="submit" class="">Delete</Button>
+                        <form method="POST" action='?/deletePost&id={post.id}' use:enhance class="">
+                            <Button type="submit" class="w-full">Delete</Button>
                         </form>
                       </AlertDialog.Footer>
                     </AlertDialog.Content>

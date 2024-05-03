@@ -54,6 +54,6 @@ export const actions = {
     deletePost: async ({url}) => {
 	    const id = url.searchParams.get('id');
         await db.delete(posts).where(eq(posts.id, id))
-	throw redirect(303, '/home')
+	throw redirect(303,'/home')
     }
 }

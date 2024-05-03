@@ -1,4 +1,5 @@
 <script lang="ts">
+     import { LoaderCircle } from 'lucide-svelte';
     import { superForm } from 'sveltekit-superforms';
     import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from "$lib/components/ui/button/index.js";
@@ -22,7 +23,7 @@
         name="content"
 		labelText="content."
 		floatLabel="Type Your content."
-		miniText="Your Email."
+		miniText="Your Content."
     />
 	<Button type="submit" disabled={$delayed}>
 		{#if $delayed}

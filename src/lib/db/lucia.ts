@@ -33,7 +33,7 @@ export const lucia = new Lucia(adapter, {
 			name: attributes.name,
 			email: attributes.email,
 			authMethods: attributes.authMethods,
-			avatarUrl: attributes.avatarUrl
+			avatarUrl: attributes.avatarUrl,
 		};
 	}
 });

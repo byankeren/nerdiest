@@ -4,8 +4,6 @@
     import * as Avatar from "$lib/components/ui/avatar";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 
-    import { ChevronDown } from 'lucide-svelte';
-
     let isActive = false;
 
     function handleClick() {
@@ -15,7 +13,7 @@
 </script>
 
 
-<header class="flex justify-between items-center py-8 px-4 md:px-0 text-primary bg-transparent">
+<header class="flex justify-between items-center px-4 md:px-0 text-primary bg-transparent py-4">
     <a href="/" class="text-2xl font-black">_.Nerd</a>
     <nav class="">
         {#if user == null}
@@ -25,7 +23,6 @@
                 <DropdownMenu.Trigger>
                     <button type="button" class="flex items-center gap-2 group" on:click={handleClick}>
                         <button class={isActive ? 'rotate-[180deg] transition-all' : 'transition-all'}>
-                            <ChevronDown />
                         </button>
                         Hello,
                         {user.name}

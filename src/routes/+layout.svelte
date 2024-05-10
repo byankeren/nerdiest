@@ -6,7 +6,7 @@
 	import { fade } from 'svelte/transition';
 	import navigationState from '$lib/stores/navigationState';
 	import PageLoader from '$lib/components/PageLoader.svelte'
-
+	
     onNavigate((navigation) => {
     	if (!document.startViewTransition) return;
     	return new Promise((resolve) => {
@@ -27,7 +27,6 @@
  {/if}
 		
 <div class="app max-w-3xl mx-auto font-primary text-primary">
-	<!-- <PageLoader /> -->
     <Navbar user="{data.user}"/>
     <slot />
 </div>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';	
 	import { Input } from '$lib/components/ui/input/index.js';
+	import Loading from '$lib/components/svg/Loading.svelte'
 	import OAuth from "$lib/components/OAuth.svelte";
 	import {
     	Button,
@@ -8,7 +9,6 @@
   	} from "$lib/components/ui/button/index.js";
 
 	import { Toaster, toast } from 'svelte-sonner'	
-	import { LoaderCircle } from 'lucide-svelte';
 	export let data;
 
 	const {
@@ -57,7 +57,7 @@
     />
 	<Button type="submit" disabled={$loginDelayed}>
 		{#if $loginDelayed}
-		<LoaderCircle class="animate-spin"/>
+			<Loading/>
 		{/if}
 		Login
 	</Button>
@@ -67,7 +67,6 @@
 		<div class="flex-grow ml-3 border-t border-gray-500"></div>
 	</div>	
 	<OAuth />
-	
 	<p class="mt-2 font-semibold w-full text-end">
 		Dont Have Account ?
 		<a href="/register" class="underline font-bold"> register</a>

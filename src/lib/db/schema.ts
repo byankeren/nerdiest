@@ -1,13 +1,13 @@
 import { sql } from 'drizzle-orm';
 
-import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { alias, integer, primaryKey, sqliteTable, text, type AnySQLiteColumn } from 'drizzle-orm/sqlite-core';
 
 import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey().notNull(),
 
-	name: text('name'),
+	name: text('name').unique(),
 
 	avatarUrl: text('avatar_url'),
 
@@ -48,21 +48,81 @@ export const oauthAccountsTable = sqliteTable('oauth_accounts',{
 
 export const posts = sqliteTable('posts', {
 	id: text('id').primaryKey().notNull(),
+
 	userId: text('user_id')
 	.notNull()
 	.references(() => users.id),
+
 	content: text('content'),
+
+	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`)
+})
+
+export const likes = sqliteTable('likes', {
+	id: text('id').primaryKey().notNull(),
+
+	userId: text('user_id')
+	.notNull()
+	.references(() => users.id),
+
+	postId: text('post_id')
+	.notNull()
+	.references(() => posts.id),
+})
+
+export const comments = sqliteTable('comments', {
+	id: text('id').primaryKey().notNull(),
+
+	content: text('content'),
+
+	commentRepliedId: text('comments_id')
+	.references((): AnySQLiteColumn => comments.id),
+
+	userId: text('user_id')
+	.notNull()
+	.references(() => users.id),
+
+	postId: text('post_id')
+	.notNull()
+	.references(() => posts.id),
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
 	posts: many(posts),
+	comments: many(comments),
 }));
 
-export const postsRelations = relations(posts, ({ one }) => ({
+export const postsRelations = relations(posts, ({ one, many }) => ({
 	author: one(users, {
 	  	fields: [posts.userId],
 	  	references: [users.id],
 	}),
+	likes: many(likes),
+	comments: many(comments),
+}));	
+
+export const likesRelations = relations(likes, ({ one }) => ({
+	post: one(posts, { 
+		fields: [likes.postId],
+		references: [posts.id],
+  	}),
 }));
+
+export const commentsRelation = relations(comments, ({one, many}) => ({
+	author: one(users, {
+		fields: [comments.userId],
+		references: [users.id],
+  	}),
+	post: one(posts, { 
+		fields: [comments.postId],
+		references: [posts.id],
+  	}),
+	parent: one(comments, {
+		fields: [comments.commentRepliedId],
+		references: [comments.id],
+		relationName: "ParentComment",
+	}),
+	children: many(comments, { relationName: "ParentComment" }),
+}))
 
 export type UserInsertSchema = typeof users.$inferInsert;

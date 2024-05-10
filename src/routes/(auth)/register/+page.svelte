@@ -4,8 +4,7 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import OAuth from "$lib/components/OAuth.svelte";
 	import { Toaster, toast } from 'svelte-sonner'	
-	import { LoaderCircle } from 'lucide-svelte';
-    
+	import Loading from '$lib/components/svg/Loading.svelte'
     export let data;
 
     const {form, errors, enhance, delayed, message } = superForm(data.form, {
@@ -58,7 +57,7 @@
     />
 	<Button type="submit" disabled={$delayed}>
 		{#if $delayed}
-		<LoaderCircle class="animate-spin"/>
+			<Loading/>
 		{/if}
 		Register
 	</Button>

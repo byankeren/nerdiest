@@ -1,68 +1,35 @@
 <script lang="ts">
-  import { superForm } from 'sveltekit-superforms';
-  import { Button } from "$lib/components/ui/button/index.js";
-  import { Toaster, toast } from 'svelte-sonner'	
-  import { Textarea } from "$lib/components/ui/textarea";
-  import Loading from "$lib/components/svg/Loading.svelte"
-  import HeartOutline from "$lib/components/svg/HeartOutline.svelte"
-  import HeartFilled from "$lib/components/svg/HeartFilled.svelte"
-  import * as Avatar from "$lib/components/ui/avatar";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import * as Dialog from "$lib/components/ui/dialog";
-  import { goto, preloadData, pushState } from '$app/navigation';
-	import { page } from '$app/stores';
-  import ProfilePage from './profile/[name]/+page.svelte';
-  import CommentsPage from './(posts)/detail/[id]/+page.svelte';
-	import BubbleText from '$lib/components/svg/BubbleText.svelte';
-	import Trash from '$lib/components/svg/Trash.svelte';
-  export let data;
-  const {form, errors, enhance, delayed, message } = superForm(data.form, {
-      onUpdated: () => {
-        if (!$message) return;
+    import { superForm } from 'sveltekit-superforms';
+    import { Input } from '$lib/components/ui/input/index.js';
+	import { Button } from "$lib/components/ui/button/index.js";
+	import { Toaster, toast } from 'svelte-sonner'	
+	import { LoaderCircle } from 'lucide-svelte';
+    import * as Avatar from "$lib/components/ui/avatar";
+    import * as AlertDialog from "$lib/components/ui/alert-dialog";
+    export let data;
 
-        const { alertType, alertText } = $message;
+    const {form, errors, enhance, delayed, message } = superForm(data.form)
 
-        if (alertType === 'error') {
-          toast.error(alertText);
-        }
-          }
-  })
-
-  async function checkProfile(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
-    if (e.metaKey || e.ctrlKey) {
-      return
-    }
-    e.preventDefault()
-
-    const { href } = e.currentTarget
-
-    const result = await preloadData(href)
-
-    if(result.type === 'loaded' && result.status === 200){
-      pushState(href, { profile: result.data })
-    } else{
-      goto(href);
-    }
-
-  }
-  let profileDialogOpen = false;
-	$: if ($page.state.profile) {
-		  profileDialogOpen = true;
-	} else {
-		  profileDialogOpen = false;
-	}
 </script>
 
 <Toaster position="top-center" closeButton/>
 
 <form method="POST" use:enhance action="?/createPost" class="px-4 w-full md:w-[65%] grid gap-2 mx-auto">
-  <Textarea id="content" bind:value={$form.content} name="content"/>
-    <Button type="submit" disabled={$delayed}>
-      {#if $delayed}
-        <Loading />
-      {/if}
-      Submit
-  </Button>	
+    <Input id="content"
+        type="content"
+        placeholder=""
+        bind:value={$form.content}
+        name="content"
+		labelText="content."
+		floatLabel="Type Your content."
+		miniText="Your Email."
+    />
+	<Button type="submit" disabled={$delayed}>
+		{#if $delayed}
+		<LoaderCircle class="animate-spin"/>
+		{/if}
+		Add
+	</Button>	
 </form>
 
 <div class="mx-auto md:w-[65%] mb-20">

@@ -1,14 +1,42 @@
 <script lang="ts">
     import { superForm } from 'sveltekit-superforms';
-    import { Input } from '$lib/components/ui/input/index.js';
-	import { Button } from "$lib/components/ui/button/index.js";
-	import { Toaster, toast } from 'svelte-sonner'	
-	import { LoaderCircle } from 'lucide-svelte';
-    import * as Avatar from "$lib/components/ui/avatar";
-    import * as AlertDialog from "$lib/components/ui/alert-dialog";
-    export let data;
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Toaster, toast } from 'svelte-sonner'	
+  import { Input } from "$lib/components/ui/input";
+  import Loading from "$lib/components/svg/Loading.svelte"
+  import HeartOutline from "$lib/components/svg/HeartOutline.svelte"
+  import HeartFilled from "$lib/components/svg/HeartFilled.svelte"
+  import * as Avatar from "$lib/components/ui/avatar";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import * as Dialog from "$lib/components/ui/dialog";
+  import { goto, preloadData, pushState } from '$app/navigation';
+	import { page } from '$app/stores';
+  import ProfilePage from './profile/[name]/+page.svelte';
+  import CommentsPage from './(posts)/detail/[id]/+page.svelte';
+	import BubbleText from '$lib/components/svg/BubbleText.svelte';
+	import Trash from '$lib/components/svg/Trash.svelte';
+  export let data;
 
     const {form, errors, enhance, delayed, message } = superForm(data.form)
+    async function checkProfile(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
+    if (e.metaKey || e.ctrlKey) {
+      return
+    }
+    e.preventDefault()
+    const { href } = e.currentTarget
+    const result = await preloadData(href)
+    if(result.type === 'loaded' && result.status === 200){
+      pushState(href, { profile: result.data })
+    } else{
+      goto(href);
+    }
+  }
+  let profileDialogOpen = false;
+	$: if ($page.state.profile) {
+		  profileDialogOpen = true;
+	} else {
+		  profileDialogOpen = false;
+	}
 
 </script>
 
@@ -26,7 +54,7 @@
     />
 	<Button type="submit" disabled={$delayed}>
 		{#if $delayed}
-		<LoaderCircle class="animate-spin"/>
+		<Loading class="animate-spin"/>
 		{/if}
 		Add
 	</Button>	
@@ -44,7 +72,7 @@
                   {/if}
                   <Avatar.Fallback>A</Avatar.Fallback>
               </Avatar.Root>
-              <a href={`home/profile/${post.author.name}`} class="underline font-bold">
+              <a href={`home/profile/${post.author.name}`} on:click={checkProfile} class="underline font-bold">
                 {post.author.name}
               </a>
             </div>

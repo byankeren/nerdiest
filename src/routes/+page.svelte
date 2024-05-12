@@ -8,7 +8,7 @@
 </script>
 
 
-<div class="flex flex-col items-center justify-center relative overflow-hidden h-[calc(100dvh-60px)] gap-2 pb-2">
+<div class="flex flex-col items-center justify-center relative overflow-hidden h-[calc(100dvh-84px)] gap-2 pb-2">
         <Reading/>
         <h1 class="text-pretty md:text-center md:text-balance text-[38px] px-6 font-bold leading-relaxed">The
             <span class="bg-primary text-white px-2">

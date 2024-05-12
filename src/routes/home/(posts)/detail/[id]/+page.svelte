@@ -31,6 +31,7 @@
 
 <Toaster position="top-center" closeButton/>
 <div class="px-4 w-full md:w-[65%] grid gap-4 mx-auto">
+    {data.displayPost.content}
     <form method="POST" use:enhance action="?/postComments&post_id={data.displayPost.id}">
         <Input
             id="content"

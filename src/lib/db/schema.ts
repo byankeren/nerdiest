@@ -15,6 +15,8 @@ export const users = sqliteTable('users', {
 
 	password: text('password'),
 
+	isAdmin: integer('is_admin', { mode: 'boolean' }).default(0),
+
 	authMethods: text('auth_methods', { mode: 'json' }).$type<string[]>().notNull(),
 
 	createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`)
@@ -25,7 +27,7 @@ export const usersSessions = sqliteTable('users_sessions', {
 
 	userId: text('user_id')
 		.notNull()
-		.references(() => users.id),
+		.references(() => users.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 
 	expiresAt: integer('expires_at').notNull()
 });
@@ -33,9 +35,7 @@ export const usersSessions = sqliteTable('users_sessions', {
 export const oauthAccountsTable = sqliteTable('oauth_accounts',{
 		userId: text('user_id')
 			.notNull()
-			.references(() => users.id, {
-				onDelete: 'cascade'
-			}),
+			.references(() => users.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 
 		providerId: text('provider_id').notNull(),
 
@@ -51,7 +51,7 @@ export const posts = sqliteTable('posts', {
 
 	userId: text('user_id')
 	.notNull()
-	.references(() => users.id),
+	.references(() => users.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 
 	content: text('content'),
 
@@ -67,7 +67,7 @@ export const likes = sqliteTable('likes', {
 
 	postId: text('post_id')
 	.notNull()
-	.references(() => posts.id),
+	.references(() => posts.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 })
 
 export const comments = sqliteTable('comments', {
@@ -76,21 +76,38 @@ export const comments = sqliteTable('comments', {
 	content: text('content'),
 
 	commentRepliedId: text('comments_id')
-	.references((): AnySQLiteColumn => comments.id),
+	.references((): AnySQLiteColumn => comments.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 
 	userId: text('user_id')
 	.notNull()
-	.references(() => users.id),
+	.references(() => users.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 
 	postId: text('post_id')
 	.notNull()
-	.references(() => posts.id),
+	.references(() => posts.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
+})
+
+
+export const tags = sqliteTable('tags', {
+	id: text('id').primaryKey().notNull(),
+	name: text('name').notNull()
+})
+
+export const postsToTags = sqliteTable('posts_to_tags', {
+	id: text('id').primaryKey().notNull(),
+	postId: text('post_id')
+	.notNull()
+	.references(() => posts.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
+	tagId: text('tag_id')
+	.notNull()
+	.references(() => tags.id, {onDelete: 'cascade', onUpdate: 'cascade'}),
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
 	posts: many(posts),
 	comments: many(comments),
 }));
+
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
 	author: one(users, {
@@ -99,7 +116,23 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 	}),
 	likes: many(likes),
 	comments: many(comments),
+	postsToTags: many(postsToTags),
 }));	
+
+export const tagsRelations = relations(tags, ({many}) => ({
+	postsToTags: many(postsToTags)
+}));
+
+export const postsToTagsRelations = relations(postsToTags, ({one}) => ({
+	post: one(posts, {
+		fields: [postsToTags.postId],
+		references: [posts.id],
+  	}),
+	tag: one(tags, {
+		fields: [postsToTags.tagId],
+		references: [tags.id],
+  	}),
+}))
 
 export const likesRelations = relations(likes, ({ one }) => ({
 	post: one(posts, { 

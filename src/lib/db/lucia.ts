@@ -34,6 +34,7 @@ export const lucia = new Lucia(adapter, {
 			email: attributes.email,
 			authMethods: attributes.authMethods,
 			avatarUrl: attributes.avatarUrl,
+			isAdmin: attributes.isAdmin,
 		};
 	}
 });
@@ -46,6 +47,7 @@ declare module 'lucia' {
 			email: string;
 			authMethods: string[];
 			avatarUrl: string;
+			isAdmin: boolean;
 		};
 	}
 }

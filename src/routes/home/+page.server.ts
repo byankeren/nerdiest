@@ -5,12 +5,13 @@ import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import { eq,and, isNull } from 'drizzle-orm';
 import { db } from '$lib/db/db';
-import { comments, likes, posts } from '$lib/db/schema';
+import { comments, likes, posts, postsToTags, tags } from '$lib/db/schema';
 
 import { generateId } from 'lucia';
 
 const schema = z.object({
         content: z.string().min(2),
+        tags: z.array(z.string()).refine((value) => value.some((item) => item))
 })
 
 export const load = async ({locals}) => {
@@ -43,6 +44,20 @@ export const load = async ({locals}) => {
                 },
                 where: isNull(comments.commentRepliedId),
             },
+            postsToTags: {
+                columns: {
+                    id: false,
+                    postId: false,
+                    tagId: false
+                },
+                with: {
+                    tag: {
+                        columns: {
+                            name: true
+                        }
+                    }
+                }
+            }
         }
     }).then(posts => {
         return posts.map(post => {
@@ -57,8 +72,8 @@ export const load = async ({locals}) => {
             };
         });
     });
-    
-    return {form, displayPosts, user}
+    const displayTags = await db.select().from(tags)
+    return {form, displayPosts, user, displayTags}
 }
 
 export const actions = {
@@ -73,20 +88,33 @@ export const actions = {
                 });
             }
 
-            const postId = generateId(15);
+            await db.transaction(async (tx) => {
 
-            await db.insert(posts).values({
-                id: postId,
-                userId: locals.user.id,
-                content: form.data.content
-            })  
+                const postId = generateId(15);
+                
+                await tx.insert(posts).values({
+                    id: postId,
+                    userId: locals.user.id,
+                    content: form.data.content
+                }).returning({insertedPost: posts.id})
+
+                for (let i = 0; i < form.data.tags.length; i++) {
+                    const tagId = generateId(6);
+                    console.log(tagId)
+                    await tx.insert(postsToTags).values({
+                        id: tagId,
+                        postId: postId,
+                        tagId: form.data.tags[i]
+                    })
+                }
+            })
     },
     deletePost: async ({url, locals}) => {
 	    const id = url.searchParams.get('id');
 
         const post = await db.selectDistinct({ id: posts.id, userId: posts.userId }).from(posts).where(eq(posts.id, id))
 
-        if(post[0].userId == locals.user.id)
+        if(post[0].userId == locals.user.id || locals.user.isAdmin)
         {
             await db.delete(posts).where(eq(posts.id, id))
             return

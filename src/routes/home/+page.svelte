@@ -8,50 +8,112 @@
   import HeartFilled from "$lib/components/svg/HeartFilled.svelte"
   import * as Avatar from "$lib/components/ui/avatar";
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import * as Dialog from "$lib/components/ui/dialog";
   import { goto, preloadData, pushState } from '$app/navigation';
 	import { page } from '$app/stores';
   import ProfilePage from './profile/[name]/+page.svelte';
-  import CommentsPage from './(posts)/detail/[id]/+page.svelte';
+  import EditPage from './(posts)/edit/[id]/+page.svelte';
 	import BubbleText from '$lib/components/svg/BubbleText.svelte';
 	import Trash from '$lib/components/svg/Trash.svelte';
+	import Edit from '$lib/components/svg/Edit.svelte';
+  import { Checkbox } from "$lib/components/ui/checkbox";
+  import { Label } from "$lib/components/ui/label";
   export let data;
 
-    const {form, errors, enhance, delayed, message } = superForm(data.form)
-    async function checkProfile(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
-    if (e.metaKey || e.ctrlKey) {
-      return
-    }
-    e.preventDefault()
-    const { href } = e.currentTarget
-    const result = await preloadData(href)
-    if(result.type === 'loaded' && result.status === 200){
-      pushState(href, { profile: result.data })
-    } else{
-      goto(href);
-    }
-  }
-  let profileDialogOpen = false;
-	$: if ($page.state.profile) {
-		  profileDialogOpen = true;
-	} else {
-		  profileDialogOpen = false;
-	}
+    const {form, errors, enhance, delayed, message } = superForm(data.form,  {		
+		onUpdated: () => {
+			if (!$message) return;
+			const { alertType, alertText } = $message;
+			if (alertType === 'error') {
+				toast.error(alertText);
+			}
+	  }})
 
+    async function checkProfile(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
+      if (e.metaKey || e.ctrlKey) {
+        return
+      }
+      e.preventDefault()
+      const { href } = e.currentTarget
+      const result = await preloadData(href)
+      if(result.type === 'loaded' && result.status === 200){
+        pushState(href, { profile: result.data })
+      } else{
+        goto(href);
+      }
+    }
+    async function updatePost(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
+      if (e.metaKey || e.ctrlKey) {
+        return
+      }
+      e.preventDefault()
+      const { href } = e.currentTarget
+      const result = await preloadData(href)
+      if(result.type === 'loaded' && result.status === 200){
+        pushState(href, { post: result.data })
+      } else{
+        goto(href);
+      }
+    }
+    let profileDialogOpen = false;
+	  $: if ($page.state.profile) {
+	  	  profileDialogOpen = true;
+	  } else {
+	  	  profileDialogOpen = false;
+	  }
+    let editDialogOpen = false;
+	  $: if ($page.state.post) {
+	  	  editDialogOpen = true;
+	  } else {
+	  	  editDialogOpen = false;
+	  }
+  function addItem(id: string) {
+    $form.tags = [...$form.tags, id];
+  }
+ 
+  function removeItem(id: string) {
+    $form.tags = $form.tags.filter((i) => i !== id);
+  }
 </script>
 
 <Toaster position="top-center" closeButton/>
-
 <form method="POST" use:enhance action="?/createPost" class="px-4 w-full md:w-[65%] grid gap-2 mx-auto">
     <Input id="content"
         type="content"
         placeholder=""
         bind:value={$form.content}
         name="content"
-		labelText="content."
-		floatLabel="Type Your content."
-		miniText="Your Email."
+		    labelText="content."
+		    floatLabel="Type Your Content."
+		    miniText="Your Content."
     />
+    <div class="flex gap-2">
+    {#each data.displayTags as item}
+    {@const checked = $form.tags.includes(item.id)}
+    <div class="flex items-start">
+        <Label for={item.name} class="bg-primary text-[#fafafa] h-full px-4 flex items-center rounded-tl-md rounded-bl-md">{item.name}</Label>
+        <Checkbox
+          id={item.name}
+          {checked}
+          onCheckedChange={(v) => {
+            if (v) {
+              addItem(item.id);
+            } else {
+              removeItem(item.id);
+            }
+          }}
+          class="rounded-tr-md rounded-br-md border-y-2 border-r-2"
+        >a</Checkbox>
+        <input
+          hidden
+          type="checkbox"
+          name="tags"
+          bind:value={item.id}
+          {checked}
+        />
+    </div>
+    {/each}
+    </div>
+
 	<Button type="submit" disabled={$delayed}>
 		{#if $delayed}
 		<Loading class="animate-spin"/>
@@ -76,8 +138,11 @@
                 {post.author.name}
               </a>
             </div>
-            <div>
-              {#if data.user.id == post.author.id}
+            <div class="flex gap-4">
+              {#if data.user.id == post.author.id || data.user.isAdmin}
+              <a href={`home/edit/${post.id}`} on:click={updatePost} class="underline font-bold">
+                <Edit/>
+              </a>
               <!--  -->
               <AlertDialog.Root>
                 <AlertDialog.Trigger>
@@ -111,6 +176,15 @@
               <div>
                 {post.content}
               </div>
+              {#if post.postsToTags !== null}
+                <div class="flex gap-2">
+                  {#each post.postsToTags as tag}
+                  <div>
+                    #{tag.tag.name}
+                  </div>
+                  {/each}
+                </div>
+              {/if}
               <div class="flex gap-4">
                 <div class="flex gap-1">
                   <a href={`home/detail/${post.id}`} class="underline font-bold">
@@ -142,9 +216,22 @@
             history.back();
           }
         }}>
-          <AlertDialog.Content class="w-[30%]">
+          <AlertDialog.Content class="w-[95%]">
           <ProfilePage data={$page.state.profile} />
-            
+            <AlertDialog.Footer>
+              <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+            </AlertDialog.Footer>
+          </AlertDialog.Content>
+        </AlertDialog.Root>
+
+      <AlertDialog.Root open={editDialogOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+            history.back();
+          }
+        }} class="w-full">
+          <AlertDialog.Content class="w-[95%]">
+          <EditPage data={$page.state.post}/>
             <AlertDialog.Footer>
               <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
             </AlertDialog.Footer>

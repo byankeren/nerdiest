@@ -18,6 +18,7 @@
         </Avatar.Root>
         <p>{comment.author.name}</p>
       </div>
+      {comment.content}
       <button on:click={() => comment.open = !comment.open}>Open</button>
       {#if comment.open}
       <form method="POST" use:enhance action="?/postReply&post_id={comment.postId}&reply_id={comment.commentRepliedId === null ? comment.id : comment.commentRepliedId}" >

@@ -5,7 +5,6 @@
 	import OAuth from "$lib/components/OAuth.svelte";
 	import {
     	Button,
-    	buttonVariants
   	} from "$lib/components/ui/button/index.js";
 
 	import { Toaster, toast } from 'svelte-sonner'	
@@ -66,9 +65,9 @@
 		<div>Or</div>
 		<div class="flex-grow ml-3 border-t border-gray-500"></div>
 	</div>	
-	<OAuth />
+	<OAuth disabledButton={$loginDelayed}/>
 	<p class="mt-2 font-semibold w-full text-end">
-		Dont Have Account ?
+		Dont Have Account?
 		<a href="/register" class="underline font-bold"> register</a>
 	</p>
 </form>

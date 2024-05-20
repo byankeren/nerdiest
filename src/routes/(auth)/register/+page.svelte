@@ -28,11 +28,11 @@
 
 <form method="POST" use:enhance action="?/register" class="px-4 w-full md:w-[65%] grid gap-2">
     <Input id="name"
-        type="name"
+        type="text"
         placeholder=""
         bind:value={$form.name}
         name="name"
-		labelText="name."
+		labelText="Name."
 		floatLabel="Type Your name."
 		miniText="Your Email."
     />
@@ -66,7 +66,7 @@
 		<div>Or</div>
 		<div class="flex-grow ml-3 border-t border-gray-500"></div>
 	</div>	
-	<OAuth/>
+	<OAuth disabledButton={$delayed}/>
 	<p class="mt-2 font-semibold w-full text-end">
 		Have Account ?
 		<a href="/login" class="underline font-bold"> Login</a>

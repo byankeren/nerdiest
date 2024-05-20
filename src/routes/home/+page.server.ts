@@ -40,9 +40,16 @@ export const load = async ({locals}) => {
             },
             comments: {
                 with: {
-                    children: true
+                    children: {
+                        columns: {
+                            id: true
+                        }
+                    }
                 },
                 where: isNull(comments.commentRepliedId),
+                columns: {
+                    id: true
+                }
             },
             postsToTags: {
                 columns: {
@@ -73,13 +80,17 @@ export const load = async ({locals}) => {
         });
     });
     const displayTags = await db.select().from(tags)
+    console.log( displayPosts )
     return {form, displayPosts, user, displayTags}
 }
 
 export const actions = {
-    createPost: async ({ request, cookies, locals }) => {
+    createPost: async ({ request, locals }) => {
+            const user = locals.user
+            if (!user){
+                throw redirect(303, '/login')
+            }
             const form = await superValidate(request, zod(schema))
-            console.log(form)
             if (!form.valid) {
                 console.log(form)
                 return message(form, {
@@ -110,6 +121,12 @@ export const actions = {
             })
     },
     deletePost: async ({url, locals}) => {
+        const user = locals.user
+
+        if (!user){
+            throw redirect(303, '/login')
+        }
+
 	    const id = url.searchParams.get('id');
 
         const post = await db.selectDistinct({ id: posts.id, userId: posts.userId }).from(posts).where(eq(posts.id, id))
@@ -119,8 +136,16 @@ export const actions = {
             await db.delete(posts).where(eq(posts.id, id))
             return
         }
+
+        error(401, { message: 'Unauthorized' })
     },
     like: async ({locals, url}) => {
+        const user = locals.user
+
+        if (!user){
+            throw redirect(303, '/login')
+        }
+
         const postId = url.searchParams.get('id');
 
         const likesId = generateId(15);

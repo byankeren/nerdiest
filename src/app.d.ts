@@ -14,7 +14,10 @@ declare global {
 			isUserLoggedIn: boolean;
 			flash?: { type: 'success' | 'error'; message: string };
 		}
-		// interface PageState {}
+		interface PageState {
+			profile: any;
+			post: any;
+		}
 		// interface Platform {}
 	}
 }

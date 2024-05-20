@@ -1,14 +1,11 @@
-import { superValidate, setError, message } from 'sveltekit-superforms';
+import { superValidate, message } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import { redirect } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
-import { eq,and, isNull } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '$lib/db/db';
-import { comments, likes, posts } from '$lib/db/schema';
-
-import { generateId } from 'lucia';
-import { alias } from 'drizzle-orm/sqlite-core/alias';
+import { posts } from '$lib/db/schema';
 
 const schema = z.object({
         content: z.string().min(2),
@@ -18,8 +15,6 @@ export const load = async ({locals, params}) => {
     const post = await db.select({content: posts.content}).from(posts).where(eq(posts.id, params.id))
     const editForm = await superValidate(post[0], zod(schema))
     const user = locals.user
-
-
 
     return {editForm}
 }
@@ -39,7 +34,7 @@ export const actions = {
         if(post[0].userId == locals.user.id || locals.user.isAdmin)
         {
             await db.update(posts).set({content: form.data.content}).where(eq(posts.id, params.id))
-            return redirect(307, '/home');
+            error(401, { message: 'Unauthorized' })
         }
     },
 }

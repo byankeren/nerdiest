@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { superForm } from 'sveltekit-superforms';
+  import { superForm } from 'sveltekit-superforms';
   import { Button } from "$lib/components/ui/button/index.js";
   import { Toaster, toast } from 'svelte-sonner'	
-  import { Input } from "$lib/components/ui/input";
   import Loading from "$lib/components/svg/Loading.svelte"
   import HeartOutline from "$lib/components/svg/HeartOutline.svelte"
   import HeartFilled from "$lib/components/svg/HeartFilled.svelte"
@@ -14,9 +13,12 @@
   import EditPage from './(posts)/edit/[id]/+page.svelte';
 	import BubbleText from '$lib/components/svg/BubbleText.svelte';
 	import Trash from '$lib/components/svg/Trash.svelte';
+	import Editor from '$lib/components/Editor.svelte';
 	import Edit from '$lib/components/svg/Edit.svelte';
-  import { Checkbox } from "$lib/components/ui/checkbox";
-  import { Label } from "$lib/components/ui/label";
+	import Tag from '$lib/components/Tag.svelte';
+	import TagCheckbox from '$lib/components/TagCheckbox.svelte';
+
+  import { PenTool } from 'lucide-svelte';
   export let data;
 
     const {form, errors, enhance, delayed, message } = superForm(data.form,  {		
@@ -36,11 +38,12 @@
       const { href } = e.currentTarget
       const result = await preloadData(href)
       if(result.type === 'loaded' && result.status === 200){
-        pushState(href, { profile: result.data })
+        pushState(href, { profile: result.data, post: undefined })
       } else{
         goto(href);
       }
     }
+
     async function updatePost(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
       if (e.metaKey || e.ctrlKey) {
         return
@@ -49,143 +52,135 @@
       const { href } = e.currentTarget
       const result = await preloadData(href)
       if(result.type === 'loaded' && result.status === 200){
-        pushState(href, { post: result.data })
+        pushState(href, { post: result.data, profile: undefined })
       } else{
         goto(href);
       }
     }
+
     let profileDialogOpen = false;
 	  $: if ($page.state.profile) {
 	  	  profileDialogOpen = true;
 	  } else {
 	  	  profileDialogOpen = false;
 	  }
+
     let editDialogOpen = false;
 	  $: if ($page.state.post) {
 	  	  editDialogOpen = true;
 	  } else {
 	  	  editDialogOpen = false;
 	  }
-  function addItem(id: string) {
-    $form.tags = [...$form.tags, id];
-  }
- 
-  function removeItem(id: string) {
-    $form.tags = $form.tags.filter((i) => i !== id);
-  }
+  
+
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+  // import SuperDebug from 'sveltekit-superforms';
 </script>
 
 <Toaster position="top-center" closeButton/>
-<form method="POST" use:enhance action="?/createPost" class="px-4 w-full md:w-[65%] grid gap-2 mx-auto">
-    <Input id="content"
-        type="content"
-        placeholder=""
-        bind:value={$form.content}
-        name="content"
-		    labelText="content."
-		    floatLabel="Type Your Content."
-		    miniText="Your Content."
-    />
-    <div class="flex gap-2">
-    {#each data.displayTags as item}
-    {@const checked = $form.tags.includes(item.id)}
-    <div class="flex items-start">
-        <Label for={item.name} class="bg-primary text-[#fafafa] h-full px-4 flex items-center rounded-tl-md rounded-bl-md">{item.name}</Label>
-        <Checkbox
-          id={item.name}
-          {checked}
-          onCheckedChange={(v) => {
-            if (v) {
-              addItem(item.id);
-            } else {
-              removeItem(item.id);
-            }
-          }}
-          class="rounded-tr-md rounded-br-md border-y-2 border-r-2"
-        >a</Checkbox>
-        <input
-          hidden
-          type="checkbox"
-          name="tags"
-          bind:value={item.id}
-          {checked}
-        />
-    </div>
-    {/each}
-    </div>
 
-	<Button type="submit" disabled={$delayed}>
-		{#if $delayed}
-		<Loading class="animate-spin"/>
-		{/if}
-		Add
-	</Button>	
-</form>
+<!-- <SuperDebug data={$form} /> -->
+<div class="mx-auto md:w-[65%] px-4">
+<AlertDialog.Root>
+  <AlertDialog.Trigger class="bg-primary p-2 rounded-full fixed right-5 bottom-5 md:static">
+    <PenTool class="text-background"/>
+  </AlertDialog.Trigger>
+    <AlertDialog.Content class="md:w-[30%]">
+      <AlertDialog.Header>
+        <AlertDialog.Title>Add Content</AlertDialog.Title>
+      </AlertDialog.Header>
+      <form method="POST" use:enhance action="?/createPost">
+        <div class="grid border-2 gap-2 border-input">
+            <div>
+              <Editor bind:content={$form.content}/>
+              <input
+              type="hidden"
+              id="content"
+              name="content"
+              required
+              data-invalid={$errors.content}
+              bind:value={$form.content}
+              />
+            </div>
+            <div class=" flex items-center pb-3">
+              <TagCheckbox tags={data.displayTags} form={$form}/>
+            </div>
+        </div>
+        <AlertDialog.Footer class="mt-5">
+          <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+          <Button type="submit" disabled={$delayed}>
+            {#if $delayed}
+              <Loading class="animate-spin"/>
+            {/if}
+              Add Content
+          </Button>
+        </AlertDialog.Footer>
+      </form>
+    </AlertDialog.Content>
+</AlertDialog.Root>
+</div>
 
-<div class="mx-auto md:w-[65%] mb-20">
+<div class="mx-auto md:w-[65%] mb-20 px-4">
   {#if data.displayPosts}
       {#each data.displayPosts as post (post.id)}
-      <div class="mt-5 border-b-2 py-4 mx-4 border-primary grid gap-4">
-          <div class="flex justify-between items-center">
-            <div class="flex gap-2 items-center">
-              <Avatar.Root>
-                {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
-                      <Avatar.Image src={`/${post.author.avatarUrl}.png`} alt="Profile" />
-                  {/if}
-                  <Avatar.Fallback>A</Avatar.Fallback>
-              </Avatar.Root>
-              <a href={`home/profile/${post.author.name}`} on:click={checkProfile} class="underline font-bold">
-                {post.author.name}
-              </a>
-            </div>
-            <div class="flex gap-4">
-              {#if data.user.id == post.author.id || data.user.isAdmin}
-              <a href={`home/edit/${post.id}`} on:click={updatePost} class="underline font-bold">
-                <Edit/>
-              </a>
-              <!--  -->
-              <AlertDialog.Root>
-                <AlertDialog.Trigger>
-                  <Trash/>
-                </AlertDialog.Trigger>
-                  <AlertDialog.Content>
-                    <AlertDialog.Header>
-                      <AlertDialog.Title>Are Wanna Delete This Folks?</AlertDialog.Title>
-                      <AlertDialog.Description>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                      </AlertDialog.Description>
-                    </AlertDialog.Header>
-                    <AlertDialog.Footer>
-                      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                      <form method="POST" action='?/deletePost&id={post.id}' use:enhance class="">
-                          <Button type="submit" class="w-full">
-                              {#if $delayed}
-                                <Loading/>
-                              {/if}
-                              Delete
-                          </Button>
-                      </form>
-                    </AlertDialog.Footer>
-                  </AlertDialog.Content>
-                </AlertDialog.Root>
-              {/if}
-            </div>
+      <div class="mt-5 border-b-2 py-4 border-primary grid grid-cols-[1.5fr_7fr] md:grid-cols-[1fr_7fr]">
+          <div class="flex gap-2 items-start">
+            <Avatar.Root>
+              {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
+                    <Avatar.Image src={`/${post.author.avatarUrl}.png`} alt="Profile" />
+                {/if}
+                <Avatar.Fallback>A</Avatar.Fallback>
+            </Avatar.Root>
           </div>
-          <div class="grid gap-4">
-              <div>
-                {post.content}
+          <div class="grid gap-2">
+              <div class="flex justify-between">
+                <a href={`home/profile/${post.author.name}`} on:click={checkProfile} class="underline font-semibold">
+                  {post.author.name}
+                </a>
+                <div class="flex gap-4">
+                {#if data.user.id == post.author.id || data.user.isAdmin}
+                <a href={`home/edit/${post.id}`} on:click={updatePost} class="underline font-bold">
+                  <Edit/>
+                </a>
+                <!--  -->
+                <AlertDialog.Root>
+                  <AlertDialog.Trigger>
+                    <Trash/>
+                  </AlertDialog.Trigger>
+                    <AlertDialog.Content class="md:w-[30%]">
+                      <AlertDialog.Header>
+                        <AlertDialog.Title>Are Wanna Delete This Folks?</AlertDialog.Title>
+                        <AlertDialog.Description>
+                          This action cannot be undone. This will permanently delete your account
+                          and remove your data from our servers.
+                        </AlertDialog.Description>
+                      </AlertDialog.Header>
+                      <AlertDialog.Footer>
+                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                        <form method="POST" action='?/deletePost&id={post.id}' use:enhance class="">
+                            <Button type="submit" class="w-full">
+                                {#if $delayed}
+                                  <Loading/>
+                                {/if}
+                                Delete
+                            </Button>
+                        </form>
+                      </AlertDialog.Footer>
+                    </AlertDialog.Content>
+                  </AlertDialog.Root>
+                {/if}
               </div>
-              {#if post.postsToTags !== null}
-                <div class="flex gap-2">
-                  {#each post.postsToTags as tag}
-                  <div>
-                    #{tag.tag.name}
-                  </div>
-                  {/each}
-                </div>
-              {/if}
-              <div class="flex gap-4">
+              </div>
+              <div class="line-clamp-2 prose dark:prose-invert">
+                {@html post.content}
+              </div>
+              <div class="text-[11px] text-muted-foreground font-medium">
+                {months[post.createdAt.split(' ')[0].split('-')[1][1]]}
+                { `${post.createdAt.split(' ')[0].split('-')[2]}, ` }
+                {post.createdAt.split(' ')[0].split('-')[0]}
+              </div>
+              <div class="flex gap-4 items-center">
                 <div class="flex gap-1">
                   <a href={`home/detail/${post.id}`} class="underline font-bold">
                     <BubbleText/>
@@ -206,6 +201,7 @@
                     {post.likes.length}
                   </p>
                 </form>
+                <Tag tags={post.postsToTags}/>
             </div>
         </div>
       </div>
@@ -216,24 +212,23 @@
             history.back();
           }
         }}>
-          <AlertDialog.Content class="w-[95%]">
+          <AlertDialog.Content class="w-[95%] md:w-[30%]">
           <ProfilePage data={$page.state.profile} />
             <AlertDialog.Footer>
               <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
             </AlertDialog.Footer>
           </AlertDialog.Content>
-        </AlertDialog.Root>
-
+      </AlertDialog.Root>
       <AlertDialog.Root open={editDialogOpen}
       onOpenChange={(open) => {
         if (!open) {
             history.back();
           }
-        }} class="w-full">
-          <AlertDialog.Content class="w-[95%]">
+        }}>
+          <AlertDialog.Content class="w-[95%] md:w-[30%]">
           <EditPage data={$page.state.post}/>
             <AlertDialog.Footer>
-              <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+              <AlertDialog.Cancel class="w-full">Cancel</AlertDialog.Cancel>
             </AlertDialog.Footer>
           </AlertDialog.Content>
         </AlertDialog.Root>

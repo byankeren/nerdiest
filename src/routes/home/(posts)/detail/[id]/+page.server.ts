@@ -24,9 +24,9 @@ export const load = async ({locals, params}) => {
     if (!user){
         throw redirect(303, '/login')
     }
+
     const form = await superValidate(zod(schema));
     const replyForm = await superValidate(zod(replySchema));
-    
     const displayPost = await db.query.posts.findFirst({
       where: eq(posts.id, params.id),
       with: {
@@ -36,7 +36,7 @@ export const load = async ({locals, params}) => {
             email: false
           }
         },
-        comments: {
+        comments: { 
           with: {
             children: {
               with: {
@@ -46,7 +46,9 @@ export const load = async ({locals, params}) => {
                     email: false
                   }
                 }
-              }
+              },
+              limit: 2,
+              offset: 2,
             },
             author: {
               columns: {
@@ -59,7 +61,7 @@ export const load = async ({locals, params}) => {
         },
       },
     })
-    // 9fn05rrexb4b173
+    console.log(displayPost)
     if(!displayPost){
       return error(404, {messages: 'not found'})
     }
@@ -69,6 +71,10 @@ export const load = async ({locals, params}) => {
 
 export const actions = {
   postComments: async({request, locals, url}) => {
+        const user = locals.user
+        if (!user){
+            throw redirect(303, '/login')
+        }
         const form = await superValidate(request, zod(schema))
         const postId = url.searchParams.get('post_id')
         if (!form.valid) {
@@ -86,6 +92,10 @@ export const actions = {
         })
   },
   postReply: async({request, locals, url}) => {
+    const user = locals.user
+    if (!user){
+      throw redirect(303, '/login')
+    }
     const replyForm = await superValidate(request, zod(replySchema))
     const postId = url.searchParams.get('post_id')
     const commentRepliedId = url.searchParams.get('reply_id')
@@ -104,6 +114,5 @@ export const actions = {
       userId: locals.user.id,
       postId: postId,
     })
-
   }
 }

@@ -11,7 +11,7 @@
 
 <AvatarPrimitive.Root
 	{delayMs}
-	class={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-black p-1", className)}
+	class={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-input p-1 bg-background", className)}
 	{...$$restProps}
 >
 	<slot />

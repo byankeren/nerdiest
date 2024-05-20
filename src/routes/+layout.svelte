@@ -23,7 +23,7 @@
 {#if $navigationState === 'loading'}
 	<PageLoader />
 	<div out:fade={{ delay: 500 }}>
-		</div>
+	</div>
  {/if}
 		
 <div class="app max-w-3xl mx-auto font-primary text-primary">

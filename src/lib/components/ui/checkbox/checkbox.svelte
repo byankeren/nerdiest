@@ -14,7 +14,7 @@
 
 <CheckboxPrimitive.Root
 	class={cn(
-		"peer box-content h-4 w-4 py-1 shrink-0 border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[disabled=true]:opacity-50",
+		"peer box-content border-2 shrink-0 border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[disabled=true]:opacity-50 flex justify-center px-2 rounded-full",
 		className
 	)}
 	bind:checked
@@ -22,23 +22,10 @@
 	on:click
 >
 	<CheckboxPrimitive.Indicator
-		class={cn("flex h-4 w-4 items-center justify-center text-current")}
+		class={cn("flex items-center justify-center text-current")}
 		let:isChecked
 		let:isIndeterminate
 	>
-		{#if isChecked}
-			<div class="h-3.5 w-3.5 flex items-center">
-				<Check/>
-			</div>
-		{:else if isIndeterminate}
-			<div class="h-3.5 w-3.5 flex items-center">
-				<Minus/>
-			</div>
-		{/if}
+		<slot/>
 	</CheckboxPrimitive.Indicator>
 </CheckboxPrimitive.Root>
-
-<!-- class={cn(
-	"peer box-content h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[disabled=true]:cursor-not-allowed data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[disabled=true]:opacity-50",
-	className
-)} -->

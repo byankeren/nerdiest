@@ -33,7 +33,6 @@
         {/if}
       </div>
     </div>
-
       {#if comment.children && comment.children.length > 0}
           <div class="ml-4 mt-4">
             <svelte:self comments={comment.children} bind:formBind={formBind}/>            

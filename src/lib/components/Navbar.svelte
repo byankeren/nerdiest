@@ -49,8 +49,8 @@
                   </DropdownMenu.Group>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
-              <Separator orientation="vertical" class="mx-2"/>
-        {/if}
+              {/if}
+        <Separator orientation="vertical" class="mx-2"/>
         <button on:click={toggleMode} variant="ghost" size="icon" class="flex items-center">
             <Sun
               class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"

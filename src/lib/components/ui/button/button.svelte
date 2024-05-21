@@ -11,7 +11,6 @@
 	export let size: $$Props["size"] = "default";
 	export let builders: $$Props["builders"] = [];
 	export let type: $$Props["type"] = undefined;
-	export let delayed: string;
 	export { className as class };
 </script>
 

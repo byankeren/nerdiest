@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';	
 	import { Input } from '$lib/components/ui/input/index.js';
-	import Loading from '$lib/components/svg/Loading.svelte'
-	import OAuth from "$lib/components/OAuth.svelte";
+
 	import {
     	Button,
     	buttonVariants
@@ -22,7 +21,7 @@
 
 <Toaster position="top-center" closeButton/>
 <form method="POST" use:enhanceEdit action="?/edit" class="grid gap-2">
-	<Input 
+	<Input
 		id="content"
         type="text"
         placeholder=""

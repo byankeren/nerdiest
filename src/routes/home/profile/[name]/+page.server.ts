@@ -10,9 +10,6 @@ import { users } from '$lib/db/schema';
 export const load = async ({locals, params}) => {
     const user = locals.user
 
-    if (!user){
-        throw redirect(303, '/login')
-    }
     const profile = await db.select({
         name: users.name,
         avatarUrl: users.avatarUrl,

@@ -17,12 +17,7 @@ const schema = z.object({
 export const load = async ({locals}) => {
     const user = locals.user
 
-    if (!user){
-        throw redirect(303, '/login')
-    }
-
     const form = await superValidate(zod(schema))
-
 
     const displayPosts = await db.query.posts.findMany({
         with: {
@@ -80,7 +75,7 @@ export const load = async ({locals}) => {
         });
     });
     const displayTags = await db.select().from(tags)
-    console.log( displayPosts )
+    // console.log( displayPosts )
     return {form, displayPosts, user, displayTags}
 }
 

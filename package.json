@@ -40,9 +40,6 @@
 	"dependencies": {
 		"@libsql/client": "^0.6.0",
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
-		"@tiptap/core": "^2.4.0",
-		"@tiptap/pm": "^2.4.0",
-		"@tiptap/starter-kit": "^2.4.0",
 		"arctic": "^1.8.0",
 		"bits-ui": "^0.21.8",
 		"clsx": "^2.1.1",

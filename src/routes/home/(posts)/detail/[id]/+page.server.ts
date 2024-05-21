@@ -21,12 +21,10 @@ const replySchema = z.object({
 export const load = async ({locals, params}) => {
     const user = locals.user
 
-    if (!user){
-        throw redirect(303, '/login')
-    }
-
     const form = await superValidate(zod(schema));
+
     const replyForm = await superValidate(zod(replySchema));
+
     const displayPost = await db.query.posts.findFirst({
       where: eq(posts.id, params.id),
       with: {
@@ -72,9 +70,7 @@ export const load = async ({locals, params}) => {
 export const actions = {
   postComments: async({request, locals, url}) => {
         const user = locals.user
-        if (!user){
-            throw redirect(303, '/login')
-        }
+
         const form = await superValidate(request, zod(schema))
         const postId = url.searchParams.get('post_id')
         if (!form.valid) {
@@ -87,15 +83,12 @@ export const actions = {
         await db.insert(comments).values({
           id: id,
           content: form.data.content,
-          userId: locals.user.id,
+          userId: user.id,
           postId: postId,
         })
   },
   postReply: async({request, locals, url}) => {
     const user = locals.user
-    if (!user){
-      throw redirect(303, '/login')
-    }
     const replyForm = await superValidate(request, zod(replySchema))
     const postId = url.searchParams.get('post_id')
     const commentRepliedId = url.searchParams.get('reply_id')
@@ -111,7 +104,7 @@ export const actions = {
       id: id,
       content: replyForm.data.content,
       commentRepliedId: commentRepliedId,
-      userId: locals.user.id,
+      userId: user.id,
       postId: postId,
     })
   }

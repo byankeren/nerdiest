@@ -13,8 +13,8 @@ const schema = z.object({
 
 export const load = async ({locals, params}) => {
     const post = await db.select({content: posts.content}).from(posts).where(eq(posts.id, params.id))
+
     const editForm = await superValidate(post[0], zod(schema))
-    const user = locals.user
 
     return {editForm}
 }
@@ -34,7 +34,8 @@ export const actions = {
         if(post[0].userId == locals.user.id || locals.user.isAdmin)
         {
             await db.update(posts).set({content: form.data.content}).where(eq(posts.id, params.id))
-            error(401, { message: 'Unauthorized' })
+            return redirect(303, '/home')
         }
+        error(401, { message: 'Unauthorized' })
     },
 }

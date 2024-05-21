@@ -13,21 +13,23 @@
   import EditPage from './(posts)/edit/[id]/+page.svelte';
 	import BubbleText from '$lib/components/svg/BubbleText.svelte';
 	import Trash from '$lib/components/svg/Trash.svelte';
-	import Editor from '$lib/components/Editor.svelte';
 	import Edit from '$lib/components/svg/Edit.svelte';
 	import Tag from '$lib/components/Tag.svelte';
 	import TagCheckbox from '$lib/components/TagCheckbox.svelte';
+	import { Input } from '$lib/components/ui/input/index.js';
+
 
   import { PenTool } from 'lucide-svelte';
   export let data;
 
-    const {form, errors, enhance, delayed, message } = superForm(data.form,  {		
-		onUpdated: () => {
-			if (!$message) return;
-			const { alertType, alertText } = $message;
-			if (alertType === 'error') {
-				toast.error(alertText);
-			}
+    const {form, errors, enhance, delayed, message } = superForm(data.form,  {	
+      invalidateAll: 'force',
+		  onUpdated: () => {
+			  if (!$message) return;
+			  const { alertType, alertText } = $message;
+			  if (alertType === 'error') {
+				  toast.error(alertText);
+			  }
 	  }})
 
     async function checkProfile(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
@@ -74,13 +76,10 @@
   
 
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-
-  // import SuperDebug from 'sveltekit-superforms';
 </script>
 
 <Toaster position="top-center" closeButton/>
 
-<!-- <SuperDebug data={$form} /> -->
 <div class="mx-auto md:w-[65%] px-4">
 <AlertDialog.Root>
   <AlertDialog.Trigger class="bg-primary p-2 rounded-full fixed right-5 bottom-5 md:static">
@@ -91,15 +90,15 @@
         <AlertDialog.Title>Add Content</AlertDialog.Title>
       </AlertDialog.Header>
       <form method="POST" use:enhance action="?/createPost">
-        <div class="grid border-2 gap-2 border-input">
+        <div class="grid gap-2">
             <div>
-              <Editor bind:content={$form.content}/>
-              <input
-              type="hidden"
+              <Input
               id="content"
               name="content"
-              required
-              data-invalid={$errors.content}
+              placeholder="your content"
+              labelText="Content."
+              floatLabel="Type Your Content."
+              miniText="Your Content."
               bind:value={$form.content}
               />
             </div>
@@ -127,7 +126,7 @@
       <div class="mt-5 border-b-2 py-4 border-primary grid grid-cols-[1.5fr_7fr] md:grid-cols-[1fr_7fr]">
           <div class="flex gap-2 items-start">
             <Avatar.Root>
-              {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
+                {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
                     <Avatar.Image src={`/${post.author.avatarUrl}.png`} alt="Profile" />
                 {/if}
                 <Avatar.Fallback>A</Avatar.Fallback>
@@ -172,8 +171,8 @@
                 {/if}
               </div>
               </div>
-              <div class="line-clamp-2 prose dark:prose-invert">
-                {@html post.content}
+              <div class="line-clamp-2">
+                {post.content}
               </div>
               <div class="text-[11px] text-muted-foreground font-medium">
                 {months[post.createdAt.split(' ')[0].split('-')[1][1]]}
@@ -187,7 +186,7 @@
                   </a>
                   <p class="font-semibold">{post.totalComments}</p>
                 </div>
-                <form method="POST" action='?/like&id={post.id}' use:enhance class="flex items-center gap-1">
+                <form method="POST" action='?/like&id={post.id}' class="flex items-center gap-1" use:enhance>
                   {#if post.likedByCurrentUser}
                     <button>
                       <HeartFilled/>
@@ -206,6 +205,11 @@
         </div>
       </div>
       {/each}
+      {#if $delayed}
+        <div class="absolute top-2 left-2">
+          <Loading class="animate-spin"/>
+        </div>
+      {/if}
       <AlertDialog.Root open={profileDialogOpen}
       onOpenChange={(open) => {
         if (!open) {
@@ -215,7 +219,7 @@
           <AlertDialog.Content class="w-[95%] md:w-[30%]">
           <ProfilePage data={$page.state.profile} />
             <AlertDialog.Footer>
-              <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+              <AlertDialog.Cancel>Close</AlertDialog.Cancel>
             </AlertDialog.Footer>
           </AlertDialog.Content>
       </AlertDialog.Root>

@@ -80,10 +80,10 @@
                 {post.id}
             </Table.Cell>
             <Table.Cell>
-                <a href={`posts/${post.id}`} on:click={postDetail} class="bg-sky-200  rounded-md px-2 py-1">
+                <a href={`posts/${post.id}`} on:click={postDetail} class="bg-sky-200 rounded-md px-2 py-1">
                   Detail
                 </a>
-                <a href={`posts/edit/${post.id}`} on:click={postEdit} class="bg-green-200  rounded-md px-2 py-1">
+                <a href={`posts/edit/${post.id}`} on:click={postEdit} class="bg-green-200 rounded-md px-2 py-1">
                   Edit
                 </a>
                 <AlertDialog.Root>

@@ -37,7 +37,10 @@
                     </DropdownMenu.Label>
                     {#if user.isAdmin}
                     <DropdownMenu.Label>
-                        <a href="/tag">Tag</a>
+                        <a href="/admin/tags">Tags</a>
+                    </DropdownMenu.Label>
+                    <DropdownMenu.Label>
+                        <a href="/admin/posts">Posts</a>
                     </DropdownMenu.Label>
                     {/if}
                     <DropdownMenu.Separator />

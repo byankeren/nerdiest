@@ -45,8 +45,6 @@ export const load = async ({locals, params}) => {
                   }
                 }
               },
-              limit: 2,
-              offset: 2,
             },
             author: {
               columns: {

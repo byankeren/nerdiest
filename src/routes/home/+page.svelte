@@ -23,7 +23,6 @@
   export let data;
 
     const {form, errors, enhance, delayed, message } = superForm(data.form,  {	
-      invalidateAll: 'force',
 		  onUpdated: () => {
 			  if (!$message) return;
 			  const { alertType, alertText } = $message;
@@ -74,7 +73,6 @@
 	  	  editDialogOpen = false;
 	  }
   
-
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 </script>
 

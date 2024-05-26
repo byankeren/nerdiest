@@ -75,7 +75,6 @@ export const load = async ({locals}) => {
         });
     });
     const displayTags = await db.select().from(tags)
-    // console.log( displayPosts )
     return {form, displayPosts, user, displayTags}
 }
 

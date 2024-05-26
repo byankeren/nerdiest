@@ -1,38 +1,31 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';	
 	import { Input } from '$lib/components/ui/input/index.js';
-	import Loading from '$lib/components/svg/Loading.svelte'
+
 	import {
     	Button,
+    	buttonVariants
   	} from "$lib/components/ui/button/index.js";
 
 	import { Toaster, toast } from 'svelte-sonner'	
 	export let data;
 
 	const {
-		form,
-		errors,
-		enhance,
-		delayed,
-		message
-	} = superForm(data.form, {
-        onUpdated: () => {
-			if (!$message) return;
-			const { alertType, alertText } = $message;
-			if (alertType === 'error') {
-				toast.error(alertText);
-			}
-		}
-    });
+		form: formEdit,
+		errors: errorsEdit,
+		enhance: enhanceEdit,
+		delayed: delayedEdit,
+		message: messageEdit
+	} = superForm(data.editForm);
 </script>
 
 <Toaster position="top-center" closeButton/>
-<form method="POST" use:enhance action="?/createTag" class="grid gap-2">
-	<Input 
+<form method="POST" use:enhanceEdit action="?/edit" class="grid gap-2">
+	<Input
 		id="content"
         type="text"
         placeholder=""
-        bind:value={$form.name}
+        bind:value={$formEdit.name}
         name="name"
 		labelText="Content."
 		floatLabel="Type Your Content."

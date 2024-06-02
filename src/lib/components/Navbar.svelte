@@ -21,8 +21,8 @@
                     Hello,
                     {user.name}
                     <Avatar.Root>
-                        {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
-                            <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
+                        {#if user.avatarUrl.split('-')[0] == 'avatar'}
+                            <Avatar.Image src={`/profile/${user.avatarUrl}`} alt="Profile" />
                         {/if}
                         <Avatar.Fallback>A</Avatar.Fallback>
                     </Avatar.Root>

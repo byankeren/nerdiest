@@ -9,8 +9,11 @@
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { goto, preloadData, pushState } from '$app/navigation';
 	import { page } from '$app/stores';
+
   import ProfilePage from './profile/[name]/+page.svelte';
   import EditPage from './(posts)/edit/[id]/+page.svelte';
+  import DeletePage from './(posts)/delete/[id]/+page.svelte';
+
 	import BubbleText from '$lib/components/svg/BubbleText.svelte';
 	import Trash from '$lib/components/svg/Trash.svelte';
 	import Edit from '$lib/components/svg/Edit.svelte';
@@ -59,6 +62,20 @@
       }
     }
 
+    async function deletePost(e: MouseEvent & {currentTarget: HTMLAnchorElement}) {
+      if (e.metaKey || e.ctrlKey) {
+        return
+      }
+      e.preventDefault()
+      const { href } = e.currentTarget
+      const result = await preloadData(href)
+      if(result.type === 'loaded' && result.status === 200){
+        pushState(href, { postDelete: result.data, profile: undefined })
+      } else{
+        goto(href);
+      }
+    }
+
     let profileDialogOpen = false;
 	  $: if ($page.state.profile) {
 	  	  profileDialogOpen = true;
@@ -72,7 +89,14 @@
 	  } else {
 	  	  editDialogOpen = false;
 	  }
-  
+
+    let deleteDialogOpen = false;
+	  $: if ($page.state.postDelete) {
+	  	  deleteDialogOpen = true;
+	  } else {
+	  	  deleteDialogOpen = false;
+	  }
+
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 </script>
 
@@ -124,9 +148,7 @@
       <div class="mt-5 border-b-2 py-4 border-primary grid grid-cols-[1.5fr_7fr] md:grid-cols-[1fr_7fr]">
           <div class="flex gap-2 items-start">
             <Avatar.Root>
-                {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
-                    <Avatar.Image src={`/${post.author.avatarUrl}.png`} alt="Profile" />
-                {/if}
+                  <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
                 <Avatar.Fallback>A</Avatar.Fallback>
             </Avatar.Root>
           </div>
@@ -140,32 +162,10 @@
                 <a href={`home/edit/${post.id}`} on:click={updatePost} class="underline font-bold">
                   <Edit/>
                 </a>
+                <a href={`home/delete/${post.id}`} on:click={deletePost} class="underline font-bold">
+                  <Trash/>
+                </a>
                 <!--  -->
-                <AlertDialog.Root>
-                  <AlertDialog.Trigger>
-                    <Trash/>
-                  </AlertDialog.Trigger>
-                    <AlertDialog.Content class="md:w-[30%]">
-                      <AlertDialog.Header>
-                        <AlertDialog.Title>Are Wanna Delete This Folks?</AlertDialog.Title>
-                        <AlertDialog.Description>
-                          This action cannot be undone. This will permanently delete your account
-                          and remove your data from our servers.
-                        </AlertDialog.Description>
-                      </AlertDialog.Header>
-                      <AlertDialog.Footer>
-                        <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                        <form method="POST" action='?/deletePost&id={post.id}' use:enhance class="">
-                            <Button type="submit" class="w-full">
-                                {#if $delayed}
-                                  <Loading/>
-                                {/if}
-                                Delete
-                            </Button>
-                        </form>
-                      </AlertDialog.Footer>
-                    </AlertDialog.Content>
-                  </AlertDialog.Root>
                 {/if}
               </div>
               </div>
@@ -214,13 +214,14 @@
             history.back();
           }
         }}>
-          <AlertDialog.Content class="w-[95%] md:w-[30%]">
+      <AlertDialog.Content class="w-[95%] md:w-[30%]">
           <ProfilePage data={$page.state.profile} />
             <AlertDialog.Footer>
               <AlertDialog.Cancel>Close</AlertDialog.Cancel>
             </AlertDialog.Footer>
           </AlertDialog.Content>
       </AlertDialog.Root>
+
       <AlertDialog.Root open={editDialogOpen}
       onOpenChange={(open) => {
         if (!open) {
@@ -233,6 +234,27 @@
               <AlertDialog.Cancel class="w-full">Cancel</AlertDialog.Cancel>
             </AlertDialog.Footer>
           </AlertDialog.Content>
-        </AlertDialog.Root>
+      </AlertDialog.Root>
+
+      <AlertDialog.Root open={deleteDialogOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+            history.back();
+          }
+        }}>
+          <AlertDialog.Content class="w-[95%] md:w-[30%]">
+          <AlertDialog.Header>
+            <AlertDialog.Title>Are Wanna Delete This Folks?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <DeletePage data={$page.state.postDelete}/>
+            <AlertDialog.Footer>
+              <AlertDialog.Cancel class="w-full">Cancel</AlertDialog.Cancel>
+            </AlertDialog.Footer>
+          </AlertDialog.Content>
+      </AlertDialog.Root>
   {/if}
 </div>

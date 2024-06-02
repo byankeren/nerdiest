@@ -47,6 +47,6 @@
         />
         <Button disabled={$replyDelayed} size="sm">Submit</Button>
     </form>
-    <Comment comments={data.displayPost.comments} bind:formBind={$replyForm.content}>
+    <Comment comments={data.displayPost.comments} bind:formBind={$replyForm.content} userId={data.user.id}>
     </Comment>
 </div>

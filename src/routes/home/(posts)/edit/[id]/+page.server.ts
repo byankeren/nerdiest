@@ -11,7 +11,7 @@ const schema = z.object({
         content: z.string().min(2),
 })
 
-export const load = async ({locals, params}) => {
+export const load = async ({ params }) => {
     const post = await db.select({content: posts.content}).from(posts).where(eq(posts.id, params.id))
 
     const editForm = await superValidate(post[0], zod(schema))
@@ -21,7 +21,7 @@ export const load = async ({locals, params}) => {
 
 
 export const actions = {
-    edit: async ({ request, cookies, locals, params }) => {
+    edit: async ({ request, locals, params }) => {
         const form = await superValidate(request, zod(schema))
         if (!form.valid) {
             console.log(form)

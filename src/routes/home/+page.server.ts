@@ -36,7 +36,7 @@ export const load = async ({locals}) => {
             comments: {
                 with: {
                     children: {
-                        columns: {
+                    columns: {
                             id: true
                         }
                     }
@@ -94,9 +94,7 @@ export const actions = {
             }
 
             await db.transaction(async (tx) => {
-
                 const postId = generateId(15);
-                
                 await tx.insert(posts).values({
                     id: postId,
                     userId: locals.user.id,
@@ -113,25 +111,6 @@ export const actions = {
                     })
                 }
             })
-    },
-    deletePost: async ({url, locals}) => {
-        const user = locals.user
-
-        if (!user){
-            throw redirect(303, '/login')
-        }
-
-	    const id = url.searchParams.get('id');
-
-        const post = await db.selectDistinct({ id: posts.id, userId: posts.userId }).from(posts).where(eq(posts.id, id))
-
-        if(post[0].userId == locals.user.id || locals.user.isAdmin)
-        {
-            await db.delete(posts).where(eq(posts.id, id))
-            return
-        }
-
-        error(401, { message: 'Unauthorized' })
     },
     like: async ({locals, url}) => {
         const user = locals.user

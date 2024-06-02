@@ -21,13 +21,17 @@
                     Hello,
                     {user.name}
                     <Avatar.Root>
-                        <Avatar.Image src={`/${user.avatarUrl}.png`} alt="Profile" />
+                        <Avatar.Image src={`/profile/${user.avatarUrl}`} alt="Profile" />
                         <Avatar.Fallback>CN</Avatar.Fallback>
                     </Avatar.Root>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   <DropdownMenu.Group>
-                    <DropdownMenu.Label>My Account</DropdownMenu.Label>
+                    <DropdownMenu.Label>
+                        <a href="/home/profile/my-profile">
+                            My Account
+                        </a>
+                    </DropdownMenu.Label>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Label>
                         <a href="/">Main Page</a>
@@ -36,6 +40,7 @@
                         <a href="/home">Home</a>
                     </DropdownMenu.Label>
                     {#if user.isAdmin}
+                    <DropdownMenu.Separator />
                     <DropdownMenu.Label>
                         <a href="/admin/tags">Tags</a>
                     </DropdownMenu.Label>

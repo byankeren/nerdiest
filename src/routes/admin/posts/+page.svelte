@@ -73,7 +73,7 @@
             </Table.Cell>
             <Table.Cell class="flex items-center gap-2">
               <Avatar.Root>
-                  <Avatar.Image src={`/${post.author.avatarUrl}.png`} alt="Profile" />
+                  <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
                   <Avatar.Fallback>A</Avatar.Fallback>
               </Avatar.Root>
                 {post.author.name}

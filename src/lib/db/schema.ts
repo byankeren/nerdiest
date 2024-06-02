@@ -117,7 +117,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 	likes: many(likes),
 	comments: many(comments),
 	postsToTags: many(postsToTags),
-}));	
+}));
 
 export const tagsRelations = relations(tags, ({many}) => ({
 	postsToTags: many(postsToTags)

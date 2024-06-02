@@ -4,10 +4,9 @@
 
 	import {
     	Button,
-    	buttonVariants
   	} from "$lib/components/ui/button/index.js";
 
-	import { Toaster, toast } from 'svelte-sonner'	
+	import { Toaster } from 'svelte-sonner'	
 	export let data;
 
 	const {

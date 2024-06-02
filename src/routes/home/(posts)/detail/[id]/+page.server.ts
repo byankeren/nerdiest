@@ -61,7 +61,6 @@ export const load = async ({locals, params}) => {
     if(!displayPost){
       return error(404, {messages: 'not found'})
     }
-    
     return { form, replyForm, displayPost, user };
 }
 

@@ -6,7 +6,7 @@
 <div class="grid gap-2">
     <div class="flex items-center gap-2">
         <Avatar.Root>
-            <Avatar.Image src={`/${data.profile[0].avatarUrl}.png`} alt="Profile" />
+            <Avatar.Image src={`/profile/${data.profile[0].avatarUrl}`} alt="Profile" />
             <Avatar.Fallback>A</Avatar.Fallback>
         </Avatar.Root>
         {data.profile[0].name}

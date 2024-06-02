@@ -3,9 +3,12 @@
     import { Label } from "$lib/components/ui/label";
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
+
     import * as Avatar from "$lib/components/ui/avatar";
     import * as RadioGroup from "$lib/components/ui/radio-group";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+
+    import Loading from "$lib/components/svg/Loading.svelte"
 
     export let data;
     
@@ -57,7 +60,12 @@
                 miniText="Your Content."
                 bind:value={$form.name}
             />
-        <Button>Edit</Button>
+        <Button disabled={$delayed}>
+            {#if $delayed}
+                <Loading class="animate-spin"/>
+            {/if}
+            Edit
+        </Button>
     <form/>
 
 </main>

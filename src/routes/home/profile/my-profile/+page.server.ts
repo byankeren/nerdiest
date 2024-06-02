@@ -10,28 +10,25 @@ import { db } from '$lib/db/db';
 
 import { users } from '$lib/db/schema';
 
-import fs from 'fs';
-import path from 'path';
-
 const schema = z.object({
     avatar: z.string(),
     name: z.string().min(2),
 })
 
 export const load = async ({ locals }) => {
-    const staticDir = path.resolve('static/profile');
-
     const user = locals.user
 
     const myProfile = await db.select().from(users).where(eq(users.name, user.name))
 
     const form = await superValidate(myProfile[0], zod(schema))
 
-    let profilePictures: string[] = [];
-
-    profilePictures = fs.readdirSync(staticDir).filter(file => {
-        return file.endsWith('.png');
-    });
+    let profilePictures: string[] = [
+        'avatar-1.png',
+        'avatar-2.png',
+        'avatar-3.png',
+        'avatar-4.png',
+        'avatar-5.png',
+    ];
 
     return { myProfile, profilePictures, form }
 } 

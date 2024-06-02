@@ -149,7 +149,7 @@
           <div class="flex gap-2 items-start">
             <Avatar.Root>
               {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
-                <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
+                <Avatar.Image src={`./profile/${post.author.avatarUrl}`} alt="Profile" />
               {/if}
                 <Avatar.Fallback>A</Avatar.Fallback>
           </Avatar.Root>

@@ -33,8 +33,10 @@
                         <div class="flex items-center space-x-2">
                             <Label for={profile}>
                                 <Avatar.Root>
-                                    <Avatar.Image src={`/profile/${profile}`} alt="Profile" />
-                                    <Avatar.Fallback>CN</Avatar.Fallback>
+                                    {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
+                                        <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
+                                    {/if}
+                                    <Avatar.Fallback>A</Avatar.Fallback>
                                 </Avatar.Root>
                             </Label>
                             <RadioGroup.Item value={profile} id={profile}/>

@@ -148,8 +148,10 @@
       <div class="mt-5 border-b-2 py-4 border-primary grid grid-cols-[1.5fr_7fr] md:grid-cols-[1fr_7fr]">
           <div class="flex gap-2 items-start">
             <Avatar.Root>
-                  <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
-                <Avatar.Fallback>A</Avatar.Fallback>
+                  {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
+                    <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
+                  {/if}
+                  <Avatar.Fallback>A</Avatar.Fallback>
             </Avatar.Root>
           </div>
           <div class="grid gap-2">

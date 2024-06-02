@@ -21,12 +21,14 @@
                     Hello,
                     {user.name}
                     <Avatar.Root>
-                        <Avatar.Image src={`/profile/${user.avatarUrl}`} alt="Profile" />
-                        <Avatar.Fallback>CN</Avatar.Fallback>
+                        {#if post.author.avatarUrl.split('-')[0] == 'avatar'}
+                            <Avatar.Image src={`/profile/${post.author.avatarUrl}`} alt="Profile" />
+                        {/if}
+                        <Avatar.Fallback>A</Avatar.Fallback>
                     </Avatar.Root>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
-                  <DropdownMenu.Group>
+                    <DropdownMenu.Group>
                     <DropdownMenu.Label>
                         <a href="/home/profile/my-profile">
                             My Account

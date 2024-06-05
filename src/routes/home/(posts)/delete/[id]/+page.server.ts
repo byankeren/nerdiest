@@ -14,14 +14,14 @@ const schema = z.object({
 export const load = async ({params, locals}) => {
     const form = await superValidate(zod(schema))
     const user = locals.user.id
+    if (user == post[0].userId || locals.user.isAdmin){
     const post = await db
         .selectDistinct({ userId: posts.userId })
         .from(posts)
         .where(eq(posts.id, params.id))
-    if (user !== post[0].userId || locals.user.isAdmin){
-        throw redirect(303, '/home')
+        return { form };
     }
-    return { form };
+    throw redirect(303, '/home')
 }
 
 export const actions = {

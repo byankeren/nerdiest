@@ -24,24 +24,23 @@ export const load = async ({ params, locals }) => {
 
     const user = locals.user.id
 
-    if (user !== post.userId || locals.user.isAdmin){
-        throw redirect(303, '/home')
+    if (user == post.userId || locals.user.isAdmin){
+        const tags = await db.query.tags.findMany({})
+        post.postsToTags = tags.map(tag => {
+            const postTag = post.postsToTags.find(pt => pt.tagId === tag.id);
+            if (postTag) {
+                return {
+                    ...postTag,
+                    ...tag
+                };
+            }
+            return {};
+        });
+        const editForm = await superValidate(post, zod(schema))
+        return {editForm, post, tags}
     }
+    throw redirect(303, '/home')
 
-    const tags = await db.query.tags.findMany({})
-
-    post.postsToTags = tags.map(tag => {
-        const postTag = post.postsToTags.find(pt => pt.tagId === tag.id);
-        if (postTag) {
-            return {
-                ...postTag,
-                ...tag
-            };
-        }
-        return {};
-    });
-    const editForm = await superValidate(post, zod(schema))
-    return {editForm, post, tags}
 }
 
 

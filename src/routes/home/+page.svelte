@@ -108,9 +108,6 @@
     <PenTool class="text-background"/>
   </AlertDialog.Trigger>
     <AlertDialog.Content class="md:w-[30%]">
-      <AlertDialog.Header>
-        <AlertDialog.Title>Add Content</AlertDialog.Title>
-      </AlertDialog.Header>
       <form method="POST" use:enhance action="?/createPost">
         <div class="grid gap-2">
             <div>
@@ -231,11 +228,12 @@
           }
         }}>
           <AlertDialog.Content class="w-[95%] md:w-[30%]">
-          <EditPage data={$page.state.post}/>
-            <AlertDialog.Footer>
-              <AlertDialog.Cancel class="w-full">Cancel</AlertDialog.Cancel>
-            </AlertDialog.Footer>
-          </AlertDialog.Content>
+            <EditPage data={$page.state.post}>
+              <AlertDialog.Footer>
+                <AlertDialog.Cancel class="w-full">Cancel</AlertDialog.Cancel>
+              </AlertDialog.Footer>
+            </EditPage>
+        </AlertDialog.Content>
       </AlertDialog.Root>
 
       <AlertDialog.Root open={deleteDialogOpen}

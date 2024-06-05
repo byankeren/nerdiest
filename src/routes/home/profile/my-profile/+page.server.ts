@@ -43,7 +43,6 @@ export const actions = {
         const name = form.data.name
 
         if (!form.valid) {
-            console.log(form)
             return message(form, {
                     alertType: 'error',
                     alertText: 'There was a problem with your submission.'
@@ -60,7 +59,5 @@ export const actions = {
                 name: name
             })
             .where(eq(users.id, locals.user.id));
-
-        console.log(form.data.avatar)
     }
 }

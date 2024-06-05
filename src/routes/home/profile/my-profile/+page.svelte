@@ -42,8 +42,8 @@
                             </Label>
                             <RadioGroup.Item value={profile} id={profile}/>
                         </div>
-                      {/each}
-                  </RadioGroup.Root>
+                        {/each}
+                    </RadioGroup.Root>
             </DropdownMenu.RadioGroup>
         </DropdownMenu.Content>
     </DropdownMenu.Root>

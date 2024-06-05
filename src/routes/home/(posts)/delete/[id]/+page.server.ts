@@ -11,8 +11,16 @@ const schema = z.object({
         content: z.string(),
 })
 
-export const load = async ({params}) => {
+export const load = async ({params, locals}) => {
     const form = await superValidate(zod(schema))
+    const user = locals.user.id
+    const post = await db
+        .selectDistinct({ userId: posts.userId })
+        .from(posts)
+        .where(eq(posts.id, params.id))
+    if (user !== post[0].userId || locals.user.isAdmin){
+        throw redirect(303, '/home')
+    }
     return { form };
 }
 
@@ -27,7 +35,7 @@ export const actions = {
         if(post[0].userId == locals.user.id || locals.user.isAdmin)
         {
             await db.delete(posts).where(eq(posts.id, id))
-            redirect('303', '/home')
+            redirect(303, '/home')
         }
 
         error(401, { message: 'Unauthorized' })

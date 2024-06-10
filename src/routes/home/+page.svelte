@@ -172,7 +172,7 @@
                 {post.content}
               </div>
               <div class="text-[11px] text-muted-foreground font-medium">
-                {months[post.createdAt.split(' ')[0].split('-')[1][1]]}
+                {months[post.createdAt.split(' ')[0].split('-')[1][1] - 1]}
                 { `${post.createdAt.split(' ')[0].split('-')[2]}, ` }
                 {post.createdAt.split(' ')[0].split('-')[0]}
               </div>

@@ -22,7 +22,7 @@
 
 {#if $navigationState === 'loading'}
 	<PageLoader />
-	<div out:fade={{ delay: 500 }}>
+	<div out:fade={{ delay: 550 }}>
 	</div>
  {/if}
 		
